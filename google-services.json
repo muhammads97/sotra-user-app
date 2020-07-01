@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "531018784076",
+    "firebase_url": "https://sotra-2020.firebaseio.com",
+    "project_id": "sotra-2020",
+    "storage_bucket": "sotra-2020.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531018784076:android:d2b6724f06c7b4f79583e9",
+        "android_client_info": {
+          "package_name": "com.sotra.sotraUser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531018784076-g7pgo4fblu44h0mq7p2agchvstek5101.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxkU5wFVkweWILtVWZiXZwUKNBmVEiAJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531018784076-g7pgo4fblu44h0mq7p2agchvstek5101.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

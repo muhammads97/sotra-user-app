@@ -1,27 +1,36 @@
 {
   "expo": {
-    "name": "sotra-user-app",
+    "name": "sotra",
+    "description": "All your clothes services in one app",
     "slug": "sotra-user-app",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "backgroundColor": "#ffffff",
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
+    "primaryColor": "#01AFFE",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "icon": "./assets/icon.png",
+    "scheme": "sotra",
+    "androidStatusBar": {
+      "backgroundColor": "#000000"
+    },
+    "android": {
+      "package": "com.sotra.sotraUser",
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyBC2XRLRchwMaxF4tFIjiWrv9mcbcCZJco" }
+      },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "privacy": "unlisted",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splashIcon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
