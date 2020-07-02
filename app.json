@@ -13,6 +13,10 @@
     "androidStatusBar": {
       "backgroundColor": "#000000"
     },
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#01AFFE"
+    },
     "android": {
       "package": "com.sotra.sotraUser",
       "googleServicesFile": "./google-services.json",

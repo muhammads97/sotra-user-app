@@ -1,5 +1,6 @@
 import endPoints from "../constants/endPoints";
-import { Notifications } from "expo";
+// import { Notifications } from "expo";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import Constants from "expo-constants";
 import * as Font from "expo-font";
@@ -13,6 +14,8 @@ export class Client {
     let loggedin = false;
     await this.loadAssets();
     let token = await SecureStore.getItemAsync("token");
+    token =
+      "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IisyMDEwMjE3MTc4OTIiLCJsYXN0X2xvZ2luIjoxNTkzNjc2NDg1fQ.ZrhKo041pXRMquraP8YT-DbZksriLeFhgCWamsnIrgM";
     if (token != null) {
       let user = await this.authClient(token);
       user.token = token;
@@ -433,8 +436,10 @@ export class Client {
 
   async setupNotifications(nav) {
     await this.registerForPushNotificationsAsync();
-    this._notificationSubscription = Notifications.addListener((notification) =>
-      this._handleNotification(notification, nav)
+    this._notificationSubscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        this._handleNotification(notification, nav);
+      }
     );
     let response = await fetch(endPoints.client.url, {
       method: endPoints.client.methods.patch,
@@ -466,7 +471,8 @@ export class Client {
         alert("Failed to get push token for push notification!");
         return;
       }
-      let token = await Notifications.getExpoPushTokenAsync();
+      const { data: token } = await Notifications.getExpoPushTokenAsync();
+      console.log(token);
       this.pushToken = token;
     } else {
       alert("Must use physical device for Push Notifications");
@@ -483,10 +489,11 @@ export class Client {
   };
 
   _handleNotification = (notification, nav) => {
+    console.log(notification);
     Vibration.vibrate();
-    nav.navigate("BottomTab", {
-      init: "Orders",
-      rootNavigation: nav,
-    });
+    // nav.navigate("BottomTab", {
+    //   init: "Orders",
+    //   rootNavigation: nav,
+    // });
   };
 }
