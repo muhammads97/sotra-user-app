@@ -34,6 +34,7 @@ export default class OrdersScreen extends React.Component {
       pickups: [],
       orders: [],
       headerElevation: 0,
+      types: {},
     };
   }
   getState() {
@@ -49,9 +50,16 @@ export default class OrdersScreen extends React.Component {
     } else {
       o[o.length - 1].last = true;
     }
+
     this.setState({ pickups: p });
     this.setState({ orders: o });
     this.scroll.scrollTo({ y: 0, x: 0, animated: true });
+    let itemsTypes = await globalThis.client.getPriceList();
+    let types = {};
+    for (let i = 0; i < itemsTypes.length; i++) {
+      types[itemsTypes[i].id] = itemsTypes[i];
+    }
+    this.setState({ types: types });
   }
 
   renderHeader = () => {
@@ -180,6 +188,7 @@ export default class OrdersScreen extends React.Component {
                   order={o}
                   dateBar={this.getState() == 2}
                   goToMap={(lat, long) => this.goToMap(lat, long)}
+                  types={this.state.types}
                 />
               );
             })}

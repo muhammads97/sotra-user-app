@@ -27,7 +27,7 @@ export default class Order extends React.Component {
     this.state = {
       lineHeight: 200,
       title: "",
-      price: "",
+      price: null,
       address: "",
       date: "",
       progress: 0,
@@ -65,58 +65,61 @@ export default class Order extends React.Component {
 
   async componentDidMount() {
     let items;
-    if (this.props.order.status == "waiting") {
-      this.setState({ title: "Waiting" });
-      this.setState({ progress: 0 });
-      this.setState({ cancelBtn: true });
-    } else if (this.props.order.status == "picking") {
-      this.setState({ title: "Picking" });
-      this.setState({ progress: 1 });
-    } else {
-      items = await globalThis.client.getOrderItems(this.props.order.id);
-      this.setState({ items: items });
-      this.setState({ title: `${items.length} Items` });
-      this.setState({ expandBtn: items.length > 0 });
-      if (this.props.order.status == "serving") {
-        this.setState({ progress: 2 });
-      } else {
-        this.setState({ progress: 3 });
-      }
-    }
-
-    if (this.props.order.status == "archived") {
-      let r = this.props.order.rating;
-      this.setState({ rate: r == null ? 0 : r });
-    }
-
-    if (this.props.order.price != null) {
-      this.setState({ price: this.props.order.price });
-    }
-
-    let addr = await globalThis.client.getAddress(this.props.order.address_id);
-    addr = this.makeAddress(addr);
-    this.setState({ address: addr });
 
     let dateStr = this.props.order.created_at;
     let date = new Date(dateStr);
     this.setState({
       date: date.getDate() + " " + Months.default[date.getMonth()],
     });
-    if (items) {
-      let itemsTypes = await globalThis.client.getPriceList();
-      let types = {};
-      for (let i = 0; i < itemsTypes.length; i++) {
-        types[itemsTypes[i].id] = itemsTypes[i];
+
+    if (this.props.order.status == "waiting") {
+      this.setState({ title: "Waiting" });
+      this.setState({ progress: 0 });
+      this.setState({ cancelBtn: true });
+      let addr = await globalThis.client.getAddress(
+        this.props.order.address_id
+      );
+      addr = this.makeAddress(addr);
+      this.setState({ address: addr });
+    } else if (this.props.order.status == "picking") {
+      this.setState({ title: "Picking" });
+      this.setState({ progress: 1 });
+      let addr = await globalThis.client.getAddress(
+        this.props.order.address_id
+      );
+      addr = this.makeAddress(addr);
+      this.setState({ address: addr });
+    } else {
+      this.setState({ title: `${this.props.order.total_items} Items` });
+      this.setState({ price: `L.E ${this.props.order.total_price}` });
+      this.setState({ expandBtn: this.props.order.total_items > 0 });
+      if (this.props.order.status == "serving") {
+        this.setState({ progress: 2 });
+      } else {
+        this.setState({ progress: 3 });
       }
+      if (this.props.order.status == "archived") {
+        this.setState({ rate: true });
+      }
+      let addr = await globalThis.client.getAddress(
+        this.props.order.address_id
+      );
+      addr = this.makeAddress(addr);
+      this.setState({ address: addr });
+
+      items = await globalThis.client.getOrderItems(this.props.order.id);
       for (let i = 0; i < items.length; i++) {
         let p = 0;
-        if (items[i].cleaning) p += types[items[i].item_id].cleaning_price;
-        if (items[i].ironing) p += types[items[i].item_id].ironing_price;
+        if (items[i].cleaning)
+          p += this.props.types[items[i].item_id].cleaning_price;
+        if (items[i].ironing)
+          p += this.props.types[items[i].item_id].ironing_price;
         items[i].price = p;
-        items[i].name = types[items[i].item_id].name;
+        items[i].name = this.props.types[items[i].item_id].name;
       }
       this.setState({ items: items });
     }
+
     let service = await globalThis.client.getService(
       this.props.order.service_id
     );
@@ -140,7 +143,7 @@ export default class Order extends React.Component {
     } else return Icons.clean;
   }
   toggleExpand() {
-    if (this.state.items.length == 0) return;
+    if (this.props.order.total_items == 0) return;
     let v = this.state.expand;
     this.setState({ expand: !v });
   }
@@ -216,8 +219,8 @@ export default class Order extends React.Component {
           >
             <View style={styles.OrderHeader}>
               <Text style={styles.orderTitle}>{this.state.title}</Text>
-              {this.props.order.price != null ? (
-                <Text style={styles.price}>L.E {this.props.order.price}</Text>
+              {this.state.price != null ? (
+                <Text style={styles.price}>{this.state.price}</Text>
               ) : null}
             </View>
             {this.state.expand
@@ -246,7 +249,7 @@ export default class Order extends React.Component {
               }
             />
             <Text style={styles.address}>{this.state.address}</Text>
-            {this.state.items.length > 0 ? (
+            {this.props.order.total_items > 0 ? (
               <Image
                 source={this.state.expand ? Icons.collapse : Icons.expand}
                 resizeMode="contain"
@@ -267,7 +270,9 @@ export default class Order extends React.Component {
             {this.state.rate ? (
               <Rate
                 onChangeRate={(rate) => this.rate(rate)}
-                value={this.state.rate}
+                value={
+                  this.props.order.rating == null ? 0 : this.props.order.rating
+                }
                 style={styles.rate}
               />
             ) : (

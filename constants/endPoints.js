@@ -1,6 +1,9 @@
+const root = "http://18.235.35.92/";
+const api_version = "api/v1/";
+const base = root + api_version;
 const endPoints = {
   login: {
-    url: "http://18.235.35.92/auth/login/client",
+    url: `${base}auth/login/client`,
     methods: {
       post: "POST",
     },
@@ -8,7 +11,7 @@ const endPoints = {
     contentType: "application/json",
   },
   verify: {
-    url: "http://18.235.35.92/auth/verify/client",
+    url: `${base}auth/verify/client`,
     methods: {
       post: "POST",
     },
@@ -16,7 +19,7 @@ const endPoints = {
     contentType: "application/json",
   },
   client: {
-    url: "http://18.235.35.92/client",
+    url: `${base}client`,
     methods: {
       get: "GET",
       patch: "PATCH",
@@ -25,7 +28,7 @@ const endPoints = {
     contentType: "application/json",
   },
   addresses: {
-    url: "http://18.235.35.92/addresses",
+    url: `${base}addresses`,
     methods: {
       get: "GET",
       post: "POST",
@@ -35,7 +38,7 @@ const endPoints = {
     contentType: "application/json",
   },
   pickup: {
-    url: "http://18.235.35.92/pickup",
+    url: `${base}pickup`,
     methods: {
       post: "POST",
     },
@@ -43,7 +46,7 @@ const endPoints = {
     contentType: "application/json",
   },
   locations: {
-    url: "http://18.235.35.92/sotra/locations",
+    url: `${base}sotra/locations`,
     methods: {
       get: "GET",
     },
@@ -51,7 +54,7 @@ const endPoints = {
     contentType: "application/json",
   },
   items: {
-    url: "http://18.235.35.92/items",
+    url: `${base}items`,
     methods: {
       get: "GET",
     },
@@ -59,7 +62,7 @@ const endPoints = {
     contentType: "application/json",
   },
   pickups: {
-    url: "http://18.235.35.92/pickups/status/waiting",
+    url: `${base}pickups/status/waiting`,
     methods: {
       get: "GET",
     },
@@ -67,7 +70,7 @@ const endPoints = {
     contentType: "application/json",
   },
   cancelPickup: {
-    url: "http://18.235.35.92/cancel_pickup",
+    url: `${base}cancel_pickup`,
     methods: {
       patch: "PATCH",
     },
@@ -75,7 +78,7 @@ const endPoints = {
     contentType: "application/json",
   },
   orders: {
-    url: "http://18.235.35.92/orders",
+    url: `${base}orders`,
     methods: {
       get: "GET",
       patch: "PATCH",
@@ -84,7 +87,7 @@ const endPoints = {
     contentType: "application/json",
   },
   cancelPickup: {
-    url: "http://18.235.35.92/cancel_pickup",
+    url: `${base}cancel_pickup`,
     methods: {
       patch: "PATCH",
     },
@@ -92,7 +95,7 @@ const endPoints = {
     contentType: "application/json",
   },
   services: {
-    url: "http://18.235.35.92/services",
+    url: `${base}services`,
     methods: {
       get: "GET",
     },
