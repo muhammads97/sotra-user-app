@@ -19,6 +19,7 @@
     },
     "android": {
       "package": "com.sotra.sotraUser",
+      "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": { "apiKey": "AIzaSyBC2XRLRchwMaxF4tFIjiWrv9mcbcCZJco" }
