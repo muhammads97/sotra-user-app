@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   StatusBar,
+  RefreshControl,
 } from "react-native";
 import StickyHeader from "../components/StickyHeader";
 import * as Icons from "../constants/Icons";
@@ -26,6 +27,7 @@ export default class PricingScreen extends React.Component {
     this.state = {
       items: [],
       headerEleveation: 0,
+      refreshing: false,
     };
   }
 
@@ -65,6 +67,11 @@ export default class PricingScreen extends React.Component {
       this.setState({ headerEleveation: 5 });
     }
   }
+  async onRefresh() {
+    this.setState({ refreshing: true });
+    await this.componentDidMount();
+    this.setState({ refreshing: false });
+  }
 
   render() {
     return (
@@ -82,6 +89,12 @@ export default class PricingScreen extends React.Component {
           showsVerticalScrollIndicator={false}
           onScroll={(e) =>
             this.adjustHeaderElevation(e.nativeEvent.contentOffset)
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => this.onRefresh()}
+            />
           }
         >
           <View style={styles.card}>

@@ -1,12 +1,7 @@
 import * as React from "react";
-import { StyleSheet, View, ToastAndroid } from "react-native";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-  SafeAreaProvider,
-  initialWindowSafeAreaInsets,
-} from "react-native-safe-area-context";
-
 import LoadingManager from "./hooks/LoadingManagerService";
 import LoginScreen from "./screens/LoginScreen";
 import VerificationScreen from "./screens/VerificationScreen";
@@ -55,7 +50,6 @@ export default class SotraApp extends React.Component {
       return null;
     } else {
       return (
-        // <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
@@ -93,7 +87,6 @@ export default class SotraApp extends React.Component {
             )}
           </Stack.Navigator>
         </NavigationContainer>
-        // </SafeAreaProvider>
       );
     }
   }

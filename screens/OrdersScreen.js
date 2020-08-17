@@ -35,6 +35,7 @@ export default class OrdersScreen extends React.Component {
       orders: [],
       headerElevation: 0,
       types: {},
+      refreshing: false,
     };
   }
   getState() {
