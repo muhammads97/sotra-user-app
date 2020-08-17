@@ -18,7 +18,7 @@
       "color": "#01AFFE"
     },
     "android": {
-      "package": "com.sotra.sotraUser",
+      "package": "com.sotra.user",
       "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "config": {

@@ -8,9 +8,67 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:531018784076:android:33ed6cd7f2c97ae29583e9",
+        "android_client_info": {
+          "package_name": "com.sotra.sotraService"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531018784076-g7pgo4fblu44h0mq7p2agchvstek5101.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxkU5wFVkweWILtVWZiXZwUKNBmVEiAJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531018784076-g7pgo4fblu44h0mq7p2agchvstek5101.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:531018784076:android:d2b6724f06c7b4f79583e9",
         "android_client_info": {
           "package_name": "com.sotra.sotraUser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531018784076-g7pgo4fblu44h0mq7p2agchvstek5101.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxkU5wFVkweWILtVWZiXZwUKNBmVEiAJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531018784076-g7pgo4fblu44h0mq7p2agchvstek5101.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531018784076:android:da356f40f2c42a159583e9",
+        "android_client_info": {
+          "package_name": "com.sotra.user"
         }
       },
       "oauth_client": [

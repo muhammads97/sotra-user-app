@@ -1,4 +1,4 @@
-const root = "http://18.235.35.92/";
+const root = "https://www.sotra-app.com/";
 const api_version = "api/v1/";
 const base = root + api_version;
 const endPoints = {
