@@ -69,12 +69,15 @@ export class Client {
       }),
     });
 
+    console.log(response);
+
     if (response.ok) {
       return {
         sent: true,
       };
     } else {
       let j = await response.json();
+      console.log(j.message);
       return {
         sent: false,
         error: j.message,

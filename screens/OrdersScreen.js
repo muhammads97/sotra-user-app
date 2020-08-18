@@ -7,6 +7,7 @@ import {
   Image,
   StatusBar,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import StickyHeader from "../components/StickyHeader";
 import * as Icons from "../constants/Icons";
@@ -61,6 +62,12 @@ export default class OrdersScreen extends React.Component {
       types[itemsTypes[i].id] = itemsTypes[i];
     }
     this.setState({ types: types });
+  }
+
+  async onRefresh() {
+    this.setState({ refreshing: true });
+    await this.componentDidMount();
+    this.setState({ refreshing: false });
   }
 
   renderHeader = () => {
@@ -171,6 +178,12 @@ export default class OrdersScreen extends React.Component {
             showsVerticalScrollIndicator={false}
             onScroll={(e) => this.onScroll(e.nativeEvent.contentOffset)}
             ref={(ref) => (this.scroll = ref)}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.onRefresh()}
+              />
+            }
           >
             {this.state.pickups.map((p) => {
               return (
