@@ -5,7 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoadingManager from "./hooks/LoadingManagerService";
 import LoginScreen from "./screens/LoginScreen";
 import VerificationScreen from "./screens/VerificationScreen";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/home/HomeScreen";
 import SelectAddressScreen from "./screens/SelectAddressScreen";
 import AddAddressScreen from "./screens/AddAddressScreen";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
