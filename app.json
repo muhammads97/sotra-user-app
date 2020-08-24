@@ -5,7 +5,7 @@
     "slug": "sotra-user-app",
     "backgroundColor": "#ffffff",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "primaryColor": "#01AFFE",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "com.sotra.user",
-      "versionCode": 1,
+      "versionCode": 3,
       "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": { "apiKey": "AIzaSyBC2XRLRchwMaxF4tFIjiWrv9mcbcCZJco" }

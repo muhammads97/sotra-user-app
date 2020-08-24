@@ -14,13 +14,13 @@ export class Client {
     let loggedin = false;
     await this.loadAssets();
     let token = await SecureStore.getItemAsync("token");
-    // token =
-    //   "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IisyMDEwMjE3MTc4OTIiLCJsYXN0X2xvZ2luIjoxNTkzNjc2NDg1fQ.ZrhKo041pXRMquraP8YT-DbZksriLeFhgCWamsnIrgM";
     if (token != null) {
       let user = await this.authClient(token);
-      user.token = token;
-      this.user = user;
-      loggedin = true;
+      if (user != null) {
+        user.token = token;
+        this.user = user;
+        loggedin = true;
+      }
     }
     callback(loggedin);
   }
