@@ -11,11 +11,12 @@ import {
   ToastAndroid,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import StickyHeader from "../components/StickyHeader";
+import StickyHeader from "../components/header/StickyHeader";
 import FloatingTitleTextInputField from "../components/FloatingPlaceholderTextInput";
-import * as Colors from "../constants/Colors";
-import * as Icons from "../constants/Icons";
+import Colors from "../constants/Colors";
+import Icons from "../constants/Icons";
 import { TextInput } from "react-native-gesture-handler";
+import Header from "../components/header/Header";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const SBHeight = StatusBar.currentHeight;
@@ -38,19 +39,19 @@ export default class AddAddressScreen extends React.Component {
     };
   }
 
-  renderHeader = () => {
-    var Sticky_header_View = (
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{this.headerText}</Text>
-        <Image
-          source={Icons.default.hanger}
-          resizeMode={"contain"}
-          style={styles.headerIcon}
-        />
-      </View>
-    );
-    return Sticky_header_View;
-  };
+  // renderHeader = () => {
+  //   var Sticky_header_View = (
+  //     <View style={styles.header}>
+  //       <Text style={styles.headerText}>{this.headerText}</Text>
+  //       <Image
+  //         source={Icons.default.hanger}
+  //         resizeMode={"contain"}
+  //         style={styles.headerIcon}
+  //       />
+  //     </View>
+  //   );
+  //   return Sticky_header_View;
+  // };
 
   onChangeName(text) {
     this.setState({ name: text });
@@ -95,11 +96,13 @@ export default class AddAddressScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <StickyHeader
-          navigator={this.navigation}
-          backName={this.backName}
+        <Header
+          nav={this.navigation}
+          backText={this.backName}
           elevation={0}
-          headerComponent={this.renderHeader()}
+          icon={Icons.hanger}
+          text={this.headerText}
+          iconStyle={styles.headerIcon}
         />
         <KeyboardAwareScrollView
           enableOnAndroid={true}
@@ -173,7 +176,7 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     height: "100%",
-    backgroundColor: Colors.default.primary,
+    backgroundColor: Colors.primary,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
   button: {
     width: "66.66%",
     height: 0.0578125 * screenHeight,
-    backgroundColor: Colors.default.primary,
+    backgroundColor: Colors.primary,
     borderRadius: 0.02890625 * screenHeight,
     justifyContent: "center",
     alignItems: "center",

@@ -6,12 +6,12 @@ import LoadingManager from "./hooks/LoadingManagerService";
 import LoginScreen from "./screens/LoginScreen";
 import VerificationScreen from "./screens/VerificationScreen";
 import HomeScreen from "./screens/home/HomeScreen";
-import SelectAddressScreen from "./screens/SelectAddressScreen";
 import AddAddressScreen from "./screens/AddAddressScreen";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import SelectLocationScreen from "./screens/SelectLocationScreen";
 import * as SplashScreen from "expo-splash-screen";
 import { Client } from "./hooks/Client";
+import SelectAddressScreen from "./screens/selectAddress/SelectAddressScreen";
 
 const Stack = createStackNavigator();
 

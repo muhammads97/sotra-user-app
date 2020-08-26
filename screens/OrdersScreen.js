@@ -9,15 +9,11 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import StickyHeader from "../components/StickyHeader";
-import * as Icons from "../constants/Icons";
-import * as Colors from "../constants/Colors";
-import { Client } from "../hooks/Client";
-import Rate from "../components/Rate";
-import ProgressBar from "../components/Progress";
+import Header from "../components/header/Header";
+import Icons from "../constants/Icons";
+import Colors from "../constants/Colors";
 import Order from "../components/Order";
 import { ScrollView } from "react-native-gesture-handler";
-import { useScrollToTop } from "@react-navigation/native";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const SBHeight = StatusBar.currentHeight;
@@ -70,19 +66,6 @@ export default class OrdersScreen extends React.Component {
     this.setState({ refreshing: false });
   }
 
-  renderHeader = () => {
-    var Sticky_header_View = (
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{this.headerText}</Text>
-        <Image
-          source={Icons.default.orders.home}
-          resizeMode={"contain"}
-          style={styles.headerIcon}
-        />
-      </View>
-    );
-    return Sticky_header_View;
-  };
   emptyList = () => {
     return (
       <Text
@@ -91,7 +74,7 @@ export default class OrdersScreen extends React.Component {
           textAlign: "center",
           fontFamily: "poppins-light",
           fontSize: 0.014 * screenHeight,
-          color: Colors.default.back,
+          color: Colors.back,
           margin: 0.02 * screenHeight,
         }}
       >
@@ -151,15 +134,32 @@ export default class OrdersScreen extends React.Component {
       rootNav: this.rootNav,
     });
   }
+  renderHeader = () => {
+    var Sticky_header_View = (
+      <View style={styles.header}>
+        <Text style={styles.headerText}>{this.headerText}</Text>
+        <Image
+          source={Icons.default.orders.home}
+          resizeMode={"contain"}
+          style={styles.headerIcon}
+        />
+      </View>
+    );
+    return Sticky_header_View;
+  };
   render() {
     return (
       <View style={styles.container}>
-        <StickyHeader
-          navigator={this.rootNav}
-          backName={this.backName}
+        <Header
+          nav={this.rootNav}
+          backText={this.backName}
           backTo={"Home"}
           elevation={this.state.headerElevation}
-          headerComponent={this.renderHeader()}
+          text={this.headerText}
+          icon={Icons.orders.home}
+          style={{ backgroundColor: Colors.orders }}
+          iconStyle={styles.headerIcon}
+          textStyle={styles.headerText}
         />
         {this.getState() == 0 ? (
           <>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     height: "100%",
-    backgroundColor: Colors.default.orders,
+    backgroundColor: Colors.orders,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   button: {
     width: "66.66%",
     height: 0.0578125 * screenHeight,
-    backgroundColor: Colors.default.orders,
+    backgroundColor: Colors.orders,
     borderRadius: 0.02890625 * screenHeight,
     justifyContent: "center",
     alignItems: "center",

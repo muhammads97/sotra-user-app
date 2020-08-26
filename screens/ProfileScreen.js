@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import * as Colors from "../constants/Colors";
 import * as Icons from "../constants/Icons";
-import StickyHeader from "../components/StickyHeader";
+import StickyHeader from "../components/header/StickyHeader";
 import {
   ScrollView,
   TextInput,

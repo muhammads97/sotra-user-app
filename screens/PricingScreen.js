@@ -8,7 +8,7 @@ import {
   StatusBar,
   RefreshControl,
 } from "react-native";
-import StickyHeader from "../components/StickyHeader";
+import StickyHeader from "../components/header/StickyHeader";
 import * as Icons from "../constants/Icons";
 import * as Colors from "../constants/Colors";
 import { Client } from "../hooks/Client";

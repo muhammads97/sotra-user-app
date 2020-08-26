@@ -11,7 +11,7 @@ import {
 import MapView from "react-native-maps";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import StickyHeader from "../components/StickyHeader";
+import StickyHeader from "../components/header/StickyHeader";
 import * as Icons from "../constants/Icons";
 import * as Colors from "../constants/Colors";
 import { Client } from "../hooks/Client";

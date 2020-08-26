@@ -8,45 +8,45 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import * as Icons from "../constants/Icons";
-import Colors from "../constants/Colors";
+import Icons from "../../constants/Icons";
+import Colors from "../../constants/Colors";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 const SBHeight = StatusBar.currentHeight;
 const height = 0.239 * (screenHeight - SBHeight);
-export default class StickyHeader extends React.Component {
-  constructor() {
-    super();
-    // console.log(0.239 * (screenHeight - SBHeight));
-  }
 
-  onPressBack() {
-    if (this.props.backTo == null) this.props.navigator.goBack();
-    else this.props.navigator.navigate(this.props.backTo);
-  }
+export default function StickyHeader({
+  backTo,
+  nav,
+  elevation,
+  backText,
+  headerComponent,
+}) {
+  const back = () => {
+    if (backTo == null) nav.goBack();
+    else nav.navigate(backTo);
+  };
 
-  render() {
-    return (
-      <View style={[styles.container, { elevation: this.props.elevation }]}>
-        <View style={styles.backView}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => this.onPressBack()}
-            activeOpacity={0.4}
-          >
-            <Image
-              source={Icons.default.back}
-              style={styles.backSymbol}
-              resizeMode={"contain"}
-            />
-            <Text style={styles.goBack}>{this.props.backName}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.headerView}>{this.props.headerComponent}</View>
+  return (
+    <View style={[styles.container, { elevation: elevation }]}>
+      <View style={styles.backView}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => back()}
+          activeOpacity={0.4}
+        >
+          <Image
+            source={Icons.back}
+            style={styles.backSymbol}
+            resizeMode={"contain"}
+          />
+          <Text style={styles.goBack}>{backText}</Text>
+        </TouchableOpacity>
       </View>
-    );
-  }
+      <View style={styles.headerView}>{headerComponent}</View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
