@@ -14,8 +14,8 @@ export class Client {
     let loggedin = false;
     await this.loadAssets();
     let token = await SecureStore.getItemAsync("token");
-    token =
-      "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IisyMDEwMjE3MTc4OTIiLCJsYXN0X2xvZ2luIjoxNTk4MDMxOTAxfQ.SVzWKKPZJjLCf9qpRYmn9JOUNCMnJa51QomVVJgT_gU";
+    // token =
+    //   "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IisyMDEwMjE3MTc4OTIiLCJsYXN0X2xvZ2luIjoxNTk4MDMxOTAxfQ.SVzWKKPZJjLCf9qpRYmn9JOUNCMnJa51QomVVJgT_gU";
     if (token != null) {
       let user = await this.authClient(token);
       if (user != null) {
