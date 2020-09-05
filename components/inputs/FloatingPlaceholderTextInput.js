@@ -6,18 +6,15 @@ import {
   TextInput,
   Dimensions,
   StatusBar,
-  Button,
 } from "react-native";
-import { string, func, object, number } from "prop-types";
-import * as Colors from "../constants/Colors";
-
-const screenWidth = Math.round(Dimensions.get("window").width);
+import * as Colors from "../../constants/Colors";
 
 const SBHeight = StatusBar.currentHeight;
 const screenHeight = Math.round(Dimensions.get("window").height) - SBHeight;
 const init_size = 0.0234375 * screenHeight;
 const animationSize = 0.75 * init_size;
 const animationBottom = 0.04 * screenHeight;
+
 export default class FloatingTitleTextInputField extends Component {
   constructor() {
     super();
@@ -40,10 +37,12 @@ export default class FloatingTitleTextInputField extends Component {
         Animated.timing(this.state.fontSize, {
           toValue: animationSize,
           duration: 250,
+          useNativeDriver: false,
         }),
         Animated.timing(this.state.bottom, {
           toValue: animationBottom,
           duration: 250,
+          useNativeDriver: false,
         }),
       ]).start();
     }
@@ -55,10 +54,12 @@ export default class FloatingTitleTextInputField extends Component {
         Animated.timing(this.state.fontSize, {
           toValue: init_size,
           duration: 250,
+          useNativeDriver: false,
         }),
         Animated.timing(this.state.bottom, {
           toValue: 0.5,
           duration: 250,
+          useNativeDriver: false,
         }),
       ]).start();
     }
@@ -97,14 +98,11 @@ const Styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   textInput: {
-    // height: 0.04 * screenHeight,
     paddingBottom: 0,
     lineHeight: 0.04 * screenHeight,
     fontSize: 0.0234375 * screenHeight,
     fontFamily: "poppins-regular",
     color: Colors.default.back,
-    // borderWidth: 1,
-    // marginBottom: 0.007 * screenHeight,
   },
   labelStyles: {
     fontFamily: "poppins-regular",

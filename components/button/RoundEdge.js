@@ -15,7 +15,7 @@ const screenHeight = Math.round(Dimensions.get("window").height) - SBHeight;
 export default function RoundEdgeButton({ style, onPress, textStyle, text }) {
   return (
     <TouchableOpacity
-      style={[style, styles.button]}
+      style={[styles.button, style]}
       activeOpacity={0.7}
       onPress={onPress}
     >

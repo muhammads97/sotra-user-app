@@ -70,7 +70,7 @@ const onPressHandler = (button, navigation, updateUser) => {
     case 3:
       navigation.navigate("BottomTab", {
         init: "Locations",
-        rootNavigation: this.navigation,
+        rootNavigation: navigation,
         updateUser: updateUser,
       });
       return;

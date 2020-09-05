@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StatusBar, Alert, ScrollView } from "react-native";
+import { View, StatusBar, ScrollView } from "react-native";
 import PickupAddress from "./PickupAddressCard";
 import Header from "../../components/header/Header";
 import RoundEdgeButton from "../../components/button/RoundEdge";
@@ -18,12 +18,12 @@ export default function SelectAddressScreen({ navigation, route }) {
   const loadAddresses = () => {
     globalThis.client.getAddresses().then((adrs) => {
       if (adrs != null) {
-        let l = [];
-        for (let i = 0; i < adrs.length; i++) {
-          let obj = { key: i, value: adrs[i] };
-          l[i] = obj;
-        }
-        setAddresses(l);
+        // let l = [];
+        // for (let i = 0; i < adrs.length; i++) {
+        //   let obj = { key: i, value: adrs[i] };
+        //   l[i] = obj;
+        // }
+        setAddresses(adrs);
       }
     });
   };
@@ -56,7 +56,7 @@ export default function SelectAddressScreen({ navigation, route }) {
   const onPressAdd = () => {
     navigation.navigate("AddAddress", {
       headerText: "Add Address",
-      backName: "Pickup Address",
+      backText: "Pickup Address",
       onBack: () => loadAddresses(),
     });
   };
@@ -85,11 +85,12 @@ export default function SelectAddressScreen({ navigation, route }) {
         style={styles.list}
         onScroll={(e) => adjustHeaderElevation(e.nativeEvent.contentOffset)}
       >
-        {addresses.map((item) => {
+        {addresses.map((item, index) => {
           return (
             <PickupAddress
               onPress={() => onPressAddress(item.value)}
-              address={item.value}
+              address={item}
+              key={index}
               style={styles.addressCard}
             />
           );

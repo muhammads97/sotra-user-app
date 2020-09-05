@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import * as Colors from "../constants/Colors";
-import { OTP4DigitsInput } from "../components/OTPInput";
-import { LoginService } from "../hooks/loginEngine";
+import * as Colors from "../../constants/Colors";
+import { OTP4DigitsInput } from "../../components/OTPInput";
+import { LoginService } from "../../hooks/loginEngine";
 import * as SecureStore from "expo-secure-store";
 
 const screenWidth = Math.round(Dimensions.get("window").width);

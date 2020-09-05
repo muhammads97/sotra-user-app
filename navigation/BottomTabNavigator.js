@@ -2,10 +2,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as React from "react";
 
 import TabBarIcon from "../components/TabBarIcon";
-import OrdersScreen from "../screens/OrdersScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import LocationsScreen from "../screens/LocationsScreen";
-import PricingScreen from "../screens/PricingScreen";
+import OrdersScreen from "../screens/orders/OrdersScreen";
+import ProfileScreen from "../screens/profile/ProfileScreen";
+import LocationsScreen from "../screens/locations/LocationsScreen";
+import PricingScreen from "../screens/pricing/PricingScreen";
 import { StyleSheet } from "react-native";
 import * as Icons from "../constants/Icons";
 

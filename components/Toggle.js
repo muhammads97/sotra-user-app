@@ -28,6 +28,7 @@ export default class Toggle extends React.Component {
     Animated.timing(this.state.left, {
       toValue: value ? 0 : this.props.style.width / 2,
       duration: 250,
+      useNativeDriver: false,
     }).start();
     this.props.onValueChange(!value);
   }
@@ -37,6 +38,7 @@ export default class Toggle extends React.Component {
       Animated.timing(this.state.left, {
         toValue: value ? this.props.style.width / 2 : 0,
         duration: 250,
+        useNativeDriver: false,
       }).start();
     }, 100);
   }

@@ -71,15 +71,12 @@ export class Client {
       }),
     });
 
-    console.log(response);
-
     if (response.ok) {
       return {
         sent: true,
       };
     } else {
       let j = await response.json();
-      console.log(j.message);
       return {
         sent: false,
         error: j.message,
@@ -241,14 +238,13 @@ export class Client {
         floor: address.floor,
         building_number: address.building,
         additional_directions: address.dir,
-        apt: address.apt,
+        apt: address.apartment,
       }),
     });
     if (response.status == 201) {
       let json = await response.json();
       return true;
     } else {
-      console.log(await response.text());
       return false;
     }
   }

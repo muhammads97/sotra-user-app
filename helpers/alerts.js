@@ -36,4 +36,14 @@ export function alertE003() {
 export function alertE004() {}
 export function alertE005() {}
 export function alertE006() {}
-export function alertE007() {}
+export function alertE017() {
+  Alert.alert(
+    "Invalid Number",
+    "This number is already registered as a service provider.",
+    [
+      {
+        text: "ok",
+      },
+    ]
+  );
+}
