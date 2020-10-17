@@ -84,11 +84,20 @@ export default function SelectAddressScreen({ navigation, route }) {
         contentContainerStyle={styles.listContent}
         style={styles.list}
         onScroll={(e) => adjustHeaderElevation(e.nativeEvent.contentOffset)}
+        scrollEventThrottle={16}
       >
+        {Platform.OS == "ios" ? (
+          <View
+            style={{
+              height: 25,
+              width: "100%",
+            }}
+          />
+        ) : null}
         {addresses.map((item, index) => {
           return (
             <PickupAddress
-              onPress={() => onPressAddress(item.value)}
+              onPress={() => onPressAddress(item)}
               address={item}
               key={index}
               style={styles.addressCard}

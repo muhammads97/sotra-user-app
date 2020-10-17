@@ -1,0 +1,7 @@
+1. place new order : post request on pickups (address id)
+2. cancel pickup: patch on cancel_pickup (id)
+3. rate order: patch on orders/id/rate
+4. get order items: get on orders/id/order_items
+5. get pickups
+6. get service
+7. get orders

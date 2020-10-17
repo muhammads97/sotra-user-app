@@ -19,7 +19,7 @@ const height = 0.239 * (screenHeight - SBHeight);
 export default function StickyHeader({
   backTo,
   nav,
-  elevation,
+  shadow,
   backText,
   headerComponent,
 }) {
@@ -29,7 +29,7 @@ export default function StickyHeader({
   };
 
   return (
-    <View style={[styles.container, { elevation: elevation }]}>
+    <View style={[styles.container, shadow]}>
       <View style={styles.backView}>
         <TouchableOpacity
           style={styles.backButton}
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     height: height,
     width: "100%",
-    elevation: 5,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -6,8 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
-  ToastAndroid,
   StatusBar,
+  Alert,
 } from "react-native";
 import { alertE017 } from "../../helpers/alerts";
 import styles from "./style";
@@ -31,9 +31,9 @@ export default function LoginScreen({ navigation, route }) {
           alertE017();
           break;
         case "#E":
-          ToastAndroid.show("Please enter a valid number", ToastAndroid.LONG);
+          Alert.alert("Error", "Please enter a valid number");
         default:
-          ToastAndroid.show("error", ToastAndroid.LONG);
+          Alert.alert("Error", "Error");
       }
     }
   };
@@ -43,6 +43,7 @@ export default function LoginScreen({ navigation, route }) {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.container}
+        scrollEventThrottle={16}
       >
         <StatusBar hidden={true} />
         <View style={styles.login}>

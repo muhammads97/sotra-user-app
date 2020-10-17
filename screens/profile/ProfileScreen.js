@@ -7,6 +7,8 @@ import {
   Alert,
   Dimensions,
   StatusBar,
+  Switch,
+  Platform,
 } from "react-native";
 import Colors from "../../constants/Colors";
 import Icons from "../../constants/Icons";
@@ -155,19 +157,31 @@ export default function ProfileScreen({ navigation, route }) {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         onScroll={(e) => adjustHeaderElevation(e.nativeEvent.contentOffset)}
+        scrollEventThrottle={16}
       >
         <View style={styles.toggleView}>
           <Text style={styles.toggleText}>Call Me Before Delivery</Text>
-          <Toggle
-            style={styles.toggle}
-            trackColor={{
-              on: Colors.track.on,
-              off: Colors.track.off,
-            }}
-            value={cbd}
-            onValueChange={(value) => toggleCBD(value)}
-            thumbColor={"#fff"}
-          />
+          {Platform.OS == "ios" ? (
+            <Switch
+              trackColor={{ false: Colors.track.off, true: Colors.track.on }}
+              // thumbColor={"#fff"}
+              // style={styles.toggle}
+              ios_backgroundColor={Colors.track.off}
+              value={cbd}
+              onValueChange={(value) => toggleCBD(value)}
+            />
+          ) : (
+            <Toggle
+              style={styles.toggle}
+              trackColor={{
+                on: Colors.track.on,
+                off: Colors.track.off,
+              }}
+              value={cbd}
+              onValueChange={(value) => toggleCBD(value)}
+              thumbColor={"#fff"}
+            />
+          )}
         </View>
         <View style={styles.usernameView}>
           <Text style={styles.usernameText}>Username</Text>

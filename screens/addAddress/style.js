@@ -21,17 +21,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-
-  header: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: Colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    elevation: 10,
-    borderRadius: 0.0333 * screenWidth,
-  },
   headerText: {
     fontFamily: "poppins-medium",
     fontSize: 0.0225 * screenHeight,

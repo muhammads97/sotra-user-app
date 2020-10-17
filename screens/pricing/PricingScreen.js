@@ -1,14 +1,5 @@
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  Image,
-  StatusBar,
-  RefreshControl,
-} from "react-native";
-import StickyHeader from "../../components/header/StickyHeader";
+import { View, Text, Image, RefreshControl } from "react-native";
 import Icons from "../../constants/Icons";
 import { ScrollView } from "react-native-gesture-handler";
 import styles from "./style";
@@ -20,7 +11,7 @@ export default function PricingScreen({ navigation, route }) {
   const backText = "Home Page";
   const headerText = "Pricing List";
   const [items, setItems] = React.useState([]);
-  const [headerElevation, setHeaderElevation] = React.useState(0);
+  const [headerShadow, setHeaderShadow] = React.useState({});
   const [refreshing, setRefreshing] = React.useState(false);
 
   const load = async () => {
@@ -38,11 +29,17 @@ export default function PricingScreen({ navigation, route }) {
     );
   };
 
-  const adjustHeaderElevation = (offset) => {
-    if (offset.y == 0 && headerElevation != 0) {
-      setHeaderElevation(0);
-    } else if (offset.y != 0 && headerElevation == 0) {
-      setHeaderElevation(5);
+  const onScroll = (offset) => {
+    if (offset.y == 0) {
+      setHeaderShadow({});
+    } else if (Object.keys(headerShadow).length === 0) {
+      setHeaderShadow({
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.16,
+        shadowRadius: 6,
+      });
     }
   };
   const onRefresh = async () => {
@@ -60,7 +57,7 @@ export default function PricingScreen({ navigation, route }) {
       <Header
         nav={rootNav}
         backText={backText}
-        elevation={headerElevation}
+        shadow={headerShadow}
         icon={Icons.profile.home}
         style={{ backgroundColor: Colors.pricing }}
         textStyle={styles.headerText}
@@ -72,14 +69,24 @@ export default function PricingScreen({ navigation, route }) {
         contentContainerStyle={{ alignItems: "center" }}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        onScroll={(e) => adjustHeaderElevation(e.nativeEvent.contentOffset)}
+        onScroll={(e) => onScroll(e.nativeEvent.contentOffset)}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => onRefresh()}
           />
         }
+        scrollEventThrottle={16}
       >
+        {Platform.OS == "ios" ? (
+          <View
+            style={{
+              height: 25,
+              width: "100%",
+            }}
+          />
+        ) : null}
         <View style={styles.card}>
           <View style={styles.tableHeader}>
             <Text style={styles.tableTilte}>Items</Text>

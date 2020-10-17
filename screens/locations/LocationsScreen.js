@@ -6,6 +6,7 @@ import * as Location from "expo-location";
 import Icons from "../../constants/Icons";
 import styles from "./style";
 import Header from "../../components/header/Header";
+import CurrentLocation from "./currentLocationButton";
 
 export default function LocationsScreen({ navigation, route }) {
   const rootNav = route.params.rootNav;
@@ -40,7 +41,7 @@ export default function LocationsScreen({ navigation, route }) {
     let location;
     if (position == null) {
       location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation,
+        accuracy: Location.Accuracy.Balanced,
         mapContainer: 5000,
         timeout: 5000,
       });
@@ -80,39 +81,41 @@ export default function LocationsScreen({ navigation, route }) {
       <Header
         nav={rootNav}
         backText={backText}
-        elevation={0}
         icon={Icons.location.home}
         text={headerText}
         iconStyle={styles.headerIcon}
       />
-      <View style={styles.mapContainer}>
-        <MapView
-          ref={map}
-          style={mapStyle}
-          onMapReady={() => onMapReady()}
-          zoomEnabled={true}
-          showsCompass={true}
-          showsUserLocation={true}
-          onRegionChangeComplete={(reg) => setRegion(reg)}
-        >
-          {locations.map((marker, index) => (
-            <MapView.Marker
-              coordinate={{
-                longitude: marker.longitude,
-                latitude: marker.latitude,
-              }}
-              title={"Sotra"}
-              description={"Sotra Service Point " + marker.id}
-              key={index}
-            >
-              <Image
-                source={Icons.locationTag}
-                resizeMode={"contain"}
-                style={styles.picker}
-              />
-            </MapView.Marker>
-          ))}
-        </MapView>
+      <View style={styles.mapOuterContainer}>
+        <View style={styles.mapContainer}>
+          <MapView
+            ref={map}
+            style={styles.mapStyle}
+            onMapReady={() => onMapReady()}
+            zoomEnabled={true}
+            showsCompass={true}
+            showsUserLocation={true}
+            onRegionChangeComplete={(reg) => setRegion(reg)}
+          >
+            {locations.map((marker, index) => (
+              <MapView.Marker
+                coordinate={{
+                  longitude: marker.longitude,
+                  latitude: marker.latitude,
+                }}
+                title={"Sotra"}
+                description={"Sotra Service Point " + marker.id}
+                key={index}
+              >
+                <Image
+                  source={Icons.locationTag}
+                  resizeMode={"contain"}
+                  style={styles.picker}
+                />
+              </MapView.Marker>
+            ))}
+          </MapView>
+          <CurrentLocation onPress={() => setLocationState()} />
+        </View>
       </View>
       <View style={styles.footer}>
         <Text style={styles.contactUsText}>Contact Our Support Line</Text>

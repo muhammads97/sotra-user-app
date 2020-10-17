@@ -36,6 +36,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
     width: "85%",
     borderRadius: 0.01875 * screenHeight,
     justifyContent: "center",

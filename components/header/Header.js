@@ -19,7 +19,7 @@ export default function Header({
   text,
   nav,
   backText,
-  elevation,
+  shadow,
   style,
   iconStyle,
   textStyle,
@@ -34,7 +34,7 @@ export default function Header({
     <StickyHeader
       nav={nav}
       backText={backText}
-      elevation={elevation}
+      shadow={shadow}
       headerComponent={headerView}
     />
   );
@@ -49,6 +49,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
     borderRadius: 0.0333 * screenWidth,
   },
   headerText: {

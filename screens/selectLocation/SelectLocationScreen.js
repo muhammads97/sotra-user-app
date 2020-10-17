@@ -16,6 +16,8 @@ import Icons from "../../constants/Icons";
 import styles from "./style";
 import Header from "../../components/header/Header";
 import Colors from "../../constants/Colors";
+import CurrentLocation from "../locations/currentLocationButton";
+import RoundEdgeButton from "../../components/button/RoundEdge";
 
 export default class SelectLocationScreen extends React.Component {
   constructor({ navigation, route }) {
@@ -51,7 +53,7 @@ export default class SelectLocationScreen extends React.Component {
   }
   async setLocationState() {
     let location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.BestForNavigation,
+      accuracy: Location.Accuracy.Balanced,
       mapContainer: 5000,
       timeout: 5000,
     });
@@ -97,30 +99,30 @@ export default class SelectLocationScreen extends React.Component {
           iconStyle={styles.headerIcon}
           textStyle={styles.headerText}
         />
-        <View style={styles.mapContainer}>
-          <MapView
-            ref={this.map}
-            style={this.state.mapStyle}
-            onMapReady={() => this.onMapReady()}
-            zoomEnabled={true}
-            showsCompass={true}
-            showsUserLocation={true}
-            onRegionChangeComplete={this.onRegionChange.bind(this)}
-          ></MapView>
-          <Image
-            source={Icons.locationTag}
-            resizeMode={"contain"}
-            style={styles.picker}
-          />
+        <View style={styles.mapOuterContainer}>
+          <View style={styles.mapContainer}>
+            <MapView
+              ref={this.map}
+              style={styles.mapStyle}
+              onMapReady={() => this.onMapReady()}
+              zoomEnabled={true}
+              showsCompass={true}
+              showsUserLocation={true}
+              onRegionChangeComplete={this.onRegionChange.bind(this)}
+            ></MapView>
+            <Image
+              source={Icons.locationTag}
+              resizeMode={"contain"}
+              style={styles.picker}
+            />
+            <CurrentLocation onPress={() => this.setLocationState()} />
+          </View>
         </View>
         <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.button}
-            activeOpacity={0.7}
+          <RoundEdgeButton
+            text={"Save Address"}
             onPress={() => this.onPressSave()}
-          >
-            <Text style={styles.buttonText}>Save Address</Text>
-          </TouchableOpacity>
+          />
         </View>
       </View>
     );

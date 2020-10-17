@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, RefreshControl } from "react-native";
+import { View, Text, RefreshControl, Platform } from "react-native";
 import Header from "../../components/header/Header";
 import Icons from "../../constants/Icons";
 import Colors from "../../constants/Colors";
@@ -15,7 +15,7 @@ export default function OrdersScreen({ navigation, route }) {
   const headerText = "Orders";
   const [pickups, setPickups] = React.useState([]);
   const [orders, setOrders] = React.useState([]);
-  const [headerElevation, setHeaderElevation] = React.useState(0);
+  const [headerShadow, setHeaderShadow] = React.useState({});
   const [types, setTypes] = React.useState({});
   const [refreshing, setRefreshing] = React.useState(false);
   const getState = () => {
@@ -25,6 +25,9 @@ export default function OrdersScreen({ navigation, route }) {
   };
 
   const load = async () => {
+    setTypes({});
+    setPickups([]);
+    setOrders([]);
     let p = await globalThis.client.getPickups();
     let o = await globalThis.client.getOrders();
     if (o.length == 0) {
@@ -62,9 +65,15 @@ export default function OrdersScreen({ navigation, route }) {
 
   const onScroll = (offset) => {
     if (offset.y == 0) {
-      setHeaderElevation(0);
-    } else if (headerElevation == 0) {
-      setHeaderElevation(5);
+      setHeaderShadow({});
+    } else if (Object.keys(headerShadow).length === 0) {
+      setHeaderShadow({
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.16,
+        shadowRadius: 6,
+      });
     }
   };
   const cancelPickup = (id) => {
@@ -96,7 +105,7 @@ export default function OrdersScreen({ navigation, route }) {
         nav={rootNav}
         backText={backText}
         backTo={"Home"}
-        elevation={headerElevation}
+        shadow={headerShadow}
         text={headerText}
         icon={Icons.orders.home}
         style={{ backgroundColor: Colors.orders }}
@@ -131,7 +140,16 @@ export default function OrdersScreen({ navigation, route }) {
               onRefresh={() => onRefresh()}
             />
           }
+          scrollEventThrottle={16}
         >
+          {Platform.OS == "ios" ? (
+            <View
+              style={{
+                height: 25,
+                width: "100%",
+              }}
+            />
+          ) : null}
           {pickups.map((p, index) => {
             return (
               <Order

@@ -1,16 +1,11 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  Platform,
-  TouchableOpacity,
-  ToastAndroid,
-} from "react-native";
+import { View, Text, Platform, TouchableOpacity, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FloatingTitleTextInputField from "../../components/inputs/FloatingPlaceholderTextInput";
 import Icons from "../../constants/Icons";
 import Header from "../../components/header/Header";
 import styles from "./style";
+import RoundEdgeButton from "../../components/button/RoundEdge";
 
 export default function AddAddressScreen({ navigation, route }) {
   const backText = route.params.backText;
@@ -25,23 +20,17 @@ export default function AddAddressScreen({ navigation, route }) {
   const [directions, setDirections] = React.useState("");
 
   const onPressSave = () => {
-    if (name.length == 0) {
-      setName("Home");
-    }
     if (street.length == 0) {
-      ToastAndroid.show("please enter your street address.", ToastAndroid.LONG);
+      Alert.alert("Error", "please enter your street address.");
       return;
     }
     if (floor.length == 0) {
-      ToastAndroid.show(
-        "please specify which floor you live in.",
-        ToastAndroid.LONG
-      );
+      Alert.alert("Error", "please specify which floor you live in.");
       return;
     }
     navigation.navigate("SelectLocation", {
       state: {
-        name,
+        name: name.length == 0 ? "Home" : name,
         street,
         building,
         floor,
@@ -69,6 +58,7 @@ export default function AddAddressScreen({ navigation, route }) {
         enableAutomaticScroll={Platform.OS === "ios"}
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
+        scrollEventThrottle={16}
       >
         <FloatingTitleTextInputField
           title={"Name (Home)"}
@@ -95,13 +85,10 @@ export default function AddAddressScreen({ navigation, route }) {
           onChangeText={(text) => setDirections(text)}
         ></FloatingTitleTextInputField>
         <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.button}
-            activeOpacity={0.7}
+          <RoundEdgeButton
+            text={"Save Address"}
             onPress={() => onPressSave()}
-          >
-            <Text style={styles.buttonText}>Save Address</Text>
-          </TouchableOpacity>
+          />
         </View>
       </KeyboardAwareScrollView>
     </View>
