@@ -14,6 +14,8 @@ export class Client {
     let loggedin = false;
     await this.loadAssets();
     let token = await SecureStore.getItemAsync("token");
+    // token =
+    // "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IisyMDEwMjE3MTc4OTIiLCJsYXN0X2xvZ2luIjoxNTk5NjcyNTMyfQ.IuqYYC_EqBWcImMVyoUbNl_DVm-TkmrkFrWr9XN2YAM";
     if (token != null) {
       let user = await this.authClient(token);
       if (user != null) {
@@ -69,15 +71,12 @@ export class Client {
       }),
     });
 
-    console.log(response);
-
     if (response.ok) {
       return {
         sent: true,
       };
     } else {
       let j = await response.json();
-      console.log(j.message);
       return {
         sent: false,
         error: j.message,
@@ -239,14 +238,13 @@ export class Client {
         floor: address.floor,
         building_number: address.building,
         additional_directions: address.dir,
-        apt: address.apt,
+        apt: address.apartment,
       }),
     });
     if (response.status == 201) {
       let json = await response.json();
       return true;
     } else {
-      console.log(await response.text());
       return false;
     }
   }

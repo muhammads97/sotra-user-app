@@ -6,13 +6,13 @@ import {
   StatusBar,
   TouchableOpacity,
   Text,
-  ToastAndroid,
+  Alert,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import * as Colors from "../constants/Colors";
-import { OTP4DigitsInput } from "../components/OTPInput";
-import { LoginService } from "../hooks/loginEngine";
+import * as Colors from "../../constants/Colors";
+import { OTP4DigitsInput } from "../../components/OTPInput";
+import { LoginService } from "../../hooks/loginEngine";
 import * as SecureStore from "expo-secure-store";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -45,7 +45,7 @@ export default class VerificationScreen extends React.Component {
   }
   async onPressSubmit() {
     if (this.input.current.getText().length != 4) {
-      ToastAndroid.show("Please enter a correct code", ToastAndroid.LONG);
+      Alert.alert("Error", "Please enter a correct code");
       return;
     }
     let res = await globalThis.client.verify(
@@ -58,10 +58,10 @@ export default class VerificationScreen extends React.Component {
     } else {
       switch (res.error) {
         case "#E013":
-          ToastAndroid.show("Please enter a correct code", ToastAndroid.LONG);
+          Alert.alert("Error", "Please enter a correct code");
           break;
         default:
-          ToastAndroid.show("error", ToastAndroid.LONG);
+          Alert.alert("Error", "Error");
           break;
       }
     }
@@ -84,9 +84,9 @@ export default class VerificationScreen extends React.Component {
           );
           break;
         case "#E":
-          ToastAndroid.show("Please enter a vslid number", ToastAndroid.LONG);
+          Alert.alert("Error", "Please enter a vslid number");
         default:
-          ToastAndroid.show("error", ToastAndroid.LONG);
+          Alert.alert("Error", "Error");
       }
     }
   }
@@ -124,6 +124,7 @@ export default class VerificationScreen extends React.Component {
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.container}
+          scrollEventThrottle={16}
         >
           <StatusBar hidden={true} />
 
@@ -215,6 +216,10 @@ const styles = StyleSheet.create({
     width: "87%",
     borderRadius: 49,
     elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.11,
+    shadowRadius: 20,
     justifyContent: "flex-start",
     alignItems: "center",
   },
@@ -247,6 +252,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 0.5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
     backgroundColor: "#fff",
   },
   buttonText: {

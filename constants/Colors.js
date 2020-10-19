@@ -1,4 +1,4 @@
-export default {
+const Colors = {
   primary: "#01AFFE",
   input: "#686868",
   pricing: "#FE6E81",
@@ -17,3 +17,5 @@ export default {
   },
   dateLine: "#CFCCCC",
 };
+
+export default Colors;

@@ -3,15 +3,15 @@ import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoadingManager from "./hooks/LoadingManagerService";
-import LoginScreen from "./screens/LoginScreen";
-import VerificationScreen from "./screens/VerificationScreen";
-import HomeScreen from "./screens/HomeScreen";
-import SelectAddressScreen from "./screens/SelectAddressScreen";
-import AddAddressScreen from "./screens/AddAddressScreen";
+import LoginScreen from "./screens/login/LoginScreen";
+import VerificationScreen from "./screens/verification/VerificationScreen";
+import HomeScreen from "./screens/home/HomeScreen";
+import AddAddressScreen from "./screens/addAddress/AddAddressScreen";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
-import SelectLocationScreen from "./screens/SelectLocationScreen";
+import SelectLocationScreen from "./screens/selectLocation/SelectLocationScreen";
 import * as SplashScreen from "expo-splash-screen";
 import { Client } from "./hooks/Client";
+import SelectAddressScreen from "./screens/selectAddress/SelectAddressScreen";
 
 const Stack = createStackNavigator();
 

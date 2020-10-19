@@ -1,4 +1,4 @@
-export default {
+const Icons = {
   orders: {
     active: require("../assets/icons/tab/active/orders.png"),
     inactive: require("../assets/icons/tab/inactive/orders.png"),
@@ -35,3 +35,5 @@ export default {
   collapse: require("../assets/icons/collapse.png"),
   cleanIron: require("../assets/icons/cleanIron.png"),
 };
+
+export default Icons;
