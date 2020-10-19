@@ -41,7 +41,7 @@ export default function Order(props) {
     setDate(date.getDate() + " " + Months.default[date.getMonth()]);
 
     if (props.order.status == "waiting") {
-      setTitle("Waiting");
+      setTitle("Order Placed");
       setProgress(0);
       setCancelBtn(true);
       let addr = await globalThis.client.getAddress(props.order.address_id);

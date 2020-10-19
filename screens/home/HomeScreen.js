@@ -35,12 +35,12 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.messageText}>
             <Text style={styles.orderNowText}>Order now,</Text>
             <Text style={[styles.orderNowText, { letterSpacing: -0.5 }]}>
-              we will be on your door steps
+              we will pickup your orders
             </Text>
             <Text
               style={[styles.orderNowText, { fontFamily: "poppins-semi-bold" }]}
             >
-              in less than 2 hours !
+              everyday from 7 to 10 PM
             </Text>
           </View>
           <Image
