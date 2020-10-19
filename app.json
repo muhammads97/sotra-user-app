@@ -5,7 +5,7 @@
     "slug": "sotra-user-app",
     "backgroundColor": "#ffffff",
     "platforms": ["ios", "android"],
-    "version": "1.0.7",
+    "version": "1.1.0",
     "primaryColor": "#01AFFE",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
