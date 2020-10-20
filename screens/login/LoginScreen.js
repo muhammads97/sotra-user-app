@@ -10,8 +10,7 @@ import {
   Alert,
   ToastAndroid,
 } from "react-native";
-import { adjustPhone, isValidPhoneNumber } from "../helpers/phone";
-import { alertE017 } from "../../helpers/alerts";
+import { adjustPhone, isValidPhoneNumber } from "../../helpers/phone";
 import styles from "./style";
 import { useDispatch } from "react-redux";
 import { login, resetRequestStatus } from "../../redux/clientSlice";

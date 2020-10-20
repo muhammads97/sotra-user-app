@@ -11,13 +11,10 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import * as Colors from "../../constants/Colors";
 import { OTP4DigitsInput } from "../../components/OTPInput";
-import { LoginService } from "../../hooks/loginEngine";
-import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
 import { resetRequestStatus, verify } from "../../redux/clientSlice";
-import { isValidVerificationCode } from "../helpers/phone";
+import { isValidVerificationCode } from "../../helpers/phone";
 import styles from "./style";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -36,9 +33,6 @@ export default function VerificationScreen(props) {
   const [code, setCode] = React.useState("");
   const [activeResend, setActiveResend] = React.useState(false);
   let timer;
-  // this.input = React.createRef();
-  // this.counterComp = React.createRef();
-  // this.navigation = navigation;
 
   if (status == "failed") {
     switch (error) {

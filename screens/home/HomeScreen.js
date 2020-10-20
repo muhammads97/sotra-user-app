@@ -4,21 +4,25 @@ import Icons from "../../constants/Icons";
 import RoundEdgeButton from "../../components/button/RoundEdge";
 import styles from "./style";
 import ButtonsSection from "./ButtonsSection";
+import { useDispatch, useSelector } from "react-redux";
+import { resetRequestStatus, loadClient } from "../../redux/clientSlice";
 
-export default function HomeScreen({ navigation }) {
-  const [name, setName] = React.useState("");
-  const updateUser = async () => {
-    let n = await globalThis.client.getName();
-    setName(n);
-  };
+export default function HomeScreen(props) {
+  const dispatch = useDispatch();
+  const name = useSelector((state) => state.client.name);
+  const status = useSelector((state) => state.client.status);
+  const error = useSelector((state) => state.client.error);
+
+  if (status == "failed") {
+    console.log("home screen:", error);
+  }
+
   const orderNow = () => {
-    navigation.navigate("SelectAddress", {
-      refresh: () => null,
-    });
+    props.navigation.navigate("SelectAddress");
   };
   React.useEffect(() => {
-    updateUser();
-    globalThis.client.setupNotifications(navigation);
+    dispatch(resetRequestStatus());
+    dispatch(loadClient());
   }, []);
 
   return (
@@ -50,7 +54,7 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
         <RoundEdgeButton text={"Order Now"} onPress={() => orderNow()} />
-        <ButtonsSection nav={navigation} updateUser={() => updateUser()} />
+        <ButtonsSection nav={props.navigation} />
       </View>
     </View>
   );

@@ -9,11 +9,11 @@ const headerHeight = 0.239 * screenHeight;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.default.primary,
+    backgroundColor: Colors.primary,
   },
   verify: {
     flex: 1,
-    backgroundColor: Colors.default.primary,
+    backgroundColor: Colors.primary,
     justifyContent: "flex-end",
     alignItems: "center",
     marginBottom: mb,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   box: {
     width: "100%",
     height: screenHeight - mb - 350,
-    backgroundColor: Colors.default.primary,
+    backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
