@@ -1,4 +1,4 @@
-export function makeAddress(address) {
+export const formatAddress = (address) => {
   let building = address.building_number.toString();
   let streetAddress = address.street;
   let floor = address.floor.toString();
@@ -21,4 +21,4 @@ export function makeAddress(address) {
     address += "(" + directions + ")";
   }
   return address;
-}
+};

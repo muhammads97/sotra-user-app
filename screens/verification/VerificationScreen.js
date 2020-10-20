@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  ToastAndroid,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -14,27 +15,58 @@ import * as Colors from "../../constants/Colors";
 import { OTP4DigitsInput } from "../../components/OTPInput";
 import { LoginService } from "../../hooks/loginEngine";
 import * as SecureStore from "expo-secure-store";
+import { useDispatch, useSelector } from "react-redux";
+import { resetRequestStatus, verify } from "../../redux/clientSlice";
+import { isValidVerificationCode } from "../helpers/phone";
+import styles from "./style";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 const mb = Math.round(0.065 * screenWidth);
 
-export default class VerificationScreen extends React.Component {
-  constructor({ navigation, route }) {
-    super();
-    this.phone = route.params.phone;
-    this.username = route.params.username;
-    this.onLogin = route.params.onLogin;
-    this.state = {
-      max: 60,
-      current: 60,
-      text: "00 : 00",
-    };
-    this.input = React.createRef();
-    this.counterComp = React.createRef();
-    this.navigation = navigation;
+export default function VerificationScreen(props) {
+  const dispatch = useDispatch();
+  const phone = useSelector((state) => state.client.phone);
+  const name = useSelector((state) => state.client.name);
+  const status = useSelector((state) => state.service.status);
+  const error = useSelector((state) => state.service.error);
+  const maxTimer = 60;
+  let currentTimer = 60;
+  const [timerText, setTimerText] = React.useState("00 : 00");
+  const [code, setCode] = React.useState("");
+  const [activeResend, setActiveResend] = React.useState(false);
+  let timer;
+  // this.input = React.createRef();
+  // this.counterComp = React.createRef();
+  // this.navigation = navigation;
+
+  if (status == "failed") {
+    switch (error) {
+      case "#E014":
+        ToastAndroid.show("Maximum attempts exceeded", ToastAndroid.LONG);
+        break;
+      case "#E017":
+        ToastAndroid.show(
+          "This number is already registered as service.",
+          ToastAndroid.LONG
+        );
+        break;
+      case "#E012":
+        ToastAndroid.show("Please login again.", ToastAndroid.LONG);
+        break;
+      case "#E013":
+        ToastAndroid.show(
+          "Wrong verification code, try again.",
+          ToastAndroid.LONG
+        );
+        break;
+      default:
+        ToastAndroid.show("Error", ToastAndroid.LONG);
+        break;
+    }
+    dispatch(resetRequestStatus());
   }
-  getTimerText(seconds) {
+  const getTimerText = (seconds) => {
     let sec = seconds % 60;
     let min = parseInt(seconds / 60) % 60;
     sec = sec.toString();
@@ -42,253 +74,99 @@ export default class VerificationScreen extends React.Component {
     min = min.toString();
     if (min.length == 1) min = "0" + min;
     return min + " : " + sec;
-  }
-  async onPressSubmit() {
-    if (this.input.current.getText().length != 4) {
-      Alert.alert("Error", "Please enter a correct code");
-      return;
-    }
-    let res = await globalThis.client.verify(
-      this.phone,
-      this.input.current.getText()
-    );
-    if (res.ok) {
-      await globalThis.client.submitUserName(this.username);
-      this.onLogin();
+  };
+  const onPressSubmit = async () => {
+    dispatch(resetRequestStatus());
+    if (isValidVerificationCode(code)) {
+      dispatch(verify({ phone, code }));
     } else {
-      switch (res.error) {
-        case "#E013":
-          Alert.alert("Error", "Please enter a correct code");
-          break;
-        default:
-          Alert.alert("Error", "Error");
-          break;
-      }
+      ToastAndroid.show("Please enter a valid code", ToastAndroid.LONG);
     }
-  }
+  };
 
-  async onPressResend() {
-    let res = await globalThis.client.login(this.phone);
-    this.startTimer();
-    if (!res.sent) {
-      switch (res.error) {
-        case "#E017":
-          Alert.alert(
-            "Invalid Number",
-            "This number is already registered as a service provider.",
-            [
-              {
-                text: i18n.t("ok"),
-              },
-            ]
-          );
-          break;
-        case "#E":
-          Alert.alert("Error", "Please enter a vslid number");
-        default:
-          Alert.alert("Error", "Error");
-      }
-    }
-  }
+  const resend = async () => {
+    setActiveResend(false);
+    startTimer();
+    dispatch(login({ phone, name }));
+  };
 
-  onPressWrongNumber() {
-    this.navigation.goBack();
-  }
-
-  startTimer() {
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        current: prevState.max,
-      };
-    });
-    this.timer = setInterval(() => {
-      const newTime = this.state.current - 1;
+  const startTimer = () => {
+    currentTimer = maxTimer;
+    timer = setInterval(() => {
+      const newTime = currentTimer - 1;
       if (newTime >= 0) {
-        this.setState({ current: newTime });
-        this.setState({ text: this.getTimerText(newTime) });
+        currentTimer = newTime;
+        setTimerText(getTimerText(newTime));
       } else {
-        clearInterval(this.timer);
-        this.setState({ text: "00 : 00" });
+        clearInterval(timer);
+        setActiveResend(true);
+        setTimerText("00 : 00");
       }
     }, 1000);
-  }
+  };
+  React.useEffect(() => {
+    dispatch(resetRequestStatus());
+    startTimer();
+  }, []);
 
-  async componentDidMount() {
-    this.startTimer();
-  }
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.container}
+        scrollEventThrottle={16}
+      >
+        <StatusBar hidden={true} />
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.container}
-          scrollEventThrottle={16}
-        >
-          <StatusBar hidden={true} />
-
-          <View style={styles.verify}>
-            <View style={styles.box}>
-              <Text style={styles.verificationText}>Verification</Text>
-              <View style={styles.vertical}>
-                <Text style={styles.mobileNumber}>{this.phone}</Text>
-                <TouchableOpacity
-                  onPress={() => this.onPressWrongNumber()}
-                  activeOpacity={0.9}
-                >
-                  <Text style={styles.wrongNumber}>Wrong number?</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.card}>
-              <OTP4DigitsInput ref={this.input} style={styles.input} />
-              <Text style={styles.code}>Enter 4 Digits Code</Text>
-              <View style={styles.resendBox}>
-                <TouchableOpacity
-                  onPress={() => this.onPressResend()}
-                  disabled={this.state.current == 0 ? false : true}
-                  activeOpacity={0.9}
-                >
-                  <Text
-                    style={
-                      this.state.current == 0
-                        ? styles.resendText
-                        : [styles.resendText, { opacity: 0.3 }]
-                    }
-                  >
-                    Resend SMS
-                  </Text>
-                </TouchableOpacity>
-                <View style={{ flex: 1 }} />
-                {this.state.current != 0 ? (
-                  <Text style={styles.counter} ref={this.counterComp}>
-                    {this.state.text}
-                  </Text>
-                ) : null}
-              </View>
+        <View style={styles.verify}>
+          <View style={styles.box}>
+            <Text style={styles.verificationText}>Verification</Text>
+            <View style={styles.vertical}>
+              <Text style={styles.mobileNumber}>{phone}</Text>
               <TouchableOpacity
-                style={styles.verifyButton}
-                onPress={() => this.onPressSubmit()}
+                onPress={() => props.navigation.goBack()}
                 activeOpacity={0.9}
               >
-                <Text style={styles.buttonText}>Submit</Text>
+                <Text style={styles.wrongNumber}>Wrong number?</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </ScrollView>
-      </View>
-    );
-  }
+          <View style={styles.card}>
+            <OTP4DigitsInput
+              onChangeText={(text) => setCode(text)}
+              style={styles.input}
+            />
+            <Text style={styles.code}>Enter 4 Digits Code</Text>
+            <View style={styles.resendBox}>
+              <TouchableOpacity
+                onPress={() => resend()}
+                disabled={!activeResend}
+                activeOpacity={0.9}
+              >
+                <Text
+                  style={[
+                    styles.resendText,
+                    { opacity: activeResend ? 1 : 0.3 },
+                  ]}
+                >
+                  Resend SMS
+                </Text>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }} />
+              {!activeResend ? (
+                <Text style={styles.counter}>{timerText}</Text>
+              ) : null}
+            </View>
+            <TouchableOpacity
+              style={styles.verifyButton}
+              onPress={() => onPressSubmit()}
+              activeOpacity={0.9}
+            >
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.default.primary,
-  },
-  verify: {
-    flex: 1,
-    backgroundColor: Colors.default.primary,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginBottom: mb,
-  },
-  vertical: {
-    flexDirection: "row",
-    marginTop: -20,
-  },
-  mobileNumber: {
-    fontFamily: "poppins-extra-light",
-    fontSize: 15,
-    color: "#fff",
-    marginRight: 8,
-  },
-  wrongNumber: {
-    fontFamily: "poppins-extra-light",
-    fontSize: 15,
-    color: "#fff",
-    textDecorationLine: "underline",
-  },
-  card: {
-    backgroundColor: "#fff",
-    height: 350,
-    width: "87%",
-    borderRadius: 49,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -10 },
-    shadowOpacity: 0.11,
-    shadowRadius: 20,
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  input: {
-    height: 56,
-    marginTop: 61,
-    width: "75%",
-  },
-  box: {
-    width: "100%",
-    height: screenHeight - mb - 350,
-    backgroundColor: Colors.default.primary,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  verificationText: {
-    fontFamily: "poppins-regular",
-    fontSize: 45,
-    color: "#fff",
-  },
-  verifyButton: {
-    alignSelf: "center",
-    borderColor: Colors.default.primary,
-    borderWidth: 1,
-    marginTop: 19,
-    width: "77%",
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 0.5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    backgroundColor: "#fff",
-  },
-  buttonText: {
-    color: Colors.default.primary,
-    fontSize: 17,
-    fontFamily: "poppins-regular",
-    marginTop: 2,
-  },
-  code: {
-    fontFamily: "poppins-extra-light",
-    fontSize: 10,
-    color: Colors.default.input,
-    marginTop: 10,
-  },
-  resendText: {
-    fontFamily: "poppins-light",
-    fontSize: 15,
-    color: Colors.default.primary,
-    textDecorationLine: "underline",
-    marginBottom: 2,
-  },
-  resendBox: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "70%",
-    height: 90,
-    alignItems: "flex-end",
-  },
-  counter: {
-    fontSize: 15,
-    fontFamily: "poppins-light",
-    color: Colors.default.input,
-    marginRight: 3,
-    marginBottom: 2,
-  },
-});

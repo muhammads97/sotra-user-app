@@ -57,21 +57,25 @@ export const initialization = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk("client/login", async (phone) => {
-  try {
-    const response = await call(loginRequest(phone));
-    return {
-      sent: true,
-      phone: phone,
-    };
-  } catch (error) {
-    return {
-      sent: false,
-      error: error.response.data.message,
-      phone: phone,
-    };
+export const login = createAsyncThunk(
+  "client/login",
+  async ({ phone, name }) => {
+    try {
+      const response = await call(loginRequest(phone));
+      return {
+        sent: true,
+        phone: phone,
+        name: name,
+      };
+    } catch (error) {
+      return {
+        sent: false,
+        error: error.response.data.message,
+        phone: phone,
+      };
+    }
   }
-});
+);
 
 export const verify = createAsyncThunk(
   "client/verify",
@@ -263,6 +267,7 @@ const clientSlice = createSlice({
     [login.fulfilled]: (state, action) => {
       if (action.payload.sent) {
         state.phone = action.payload.phone;
+        state.name = action.payload.name;
         state.loggingIn = true;
         state.loggingInStatus = "succeeded";
       } else {

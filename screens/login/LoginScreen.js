@@ -8,35 +8,53 @@ import {
   Text,
   StatusBar,
   Alert,
+  ToastAndroid,
 } from "react-native";
+import { adjustPhone, isValidPhoneNumber } from "../helpers/phone";
 import { alertE017 } from "../../helpers/alerts";
 import styles from "./style";
+import { useDispatch } from "react-redux";
+import { login, resetRequestStatus } from "../../redux/clientSlice";
 
-export default function LoginScreen({ navigation, route }) {
-  const onLogin = route.params.onLogin;
+export default function LoginScreen(props) {
+  const dispatch = useDispatch();
+  const loggingInStatus = useSelector((state) => state.client.loggingInStatus);
+  const error = useSelector((state) => state.client.error);
   const [phone, setPhone] = React.useState("");
   const [username, setUsername] = React.useState("");
+  const [disabled, setDisabled] = React.useState(false);
 
-  const login = async () => {
-    let res = await globalThis.client.login(phone);
-    if (res.sent) {
-      navigation.navigate("Verify", {
-        phone: phone,
-        username: username,
-        onLogin: onLogin,
-      });
+  const onClickLogin = async () => {
+    setDisabled(true);
+    let pNum = adjustPhone(phone);
+    if (isValidPhoneNumber(pNum)) {
+      dispatch(login({ phone: pNum, name: username }));
     } else {
-      switch (res.error) {
-        case "#E017":
-          alertE017();
-          break;
-        case "#E":
-          Alert.alert("Error", "Please enter a valid number");
-        default:
-          Alert.alert("Error", "Error");
-      }
+      ToastAndroid.show("Please enter a valid number", ToastAndroid.LONG);
     }
+    setDisabled(false);
   };
+
+  if (loggingInStatus == "succeeded") {
+    props.navigation.navigate("Verify");
+  } else if (loggingInStatus == "failed") {
+    switch (error) {
+      case "#E014":
+        ToastAndroid.show("Maximum attempts exceeded", ToastAndroid.LONG);
+        break;
+      case "#E017":
+        ToastAndroid.show(
+          "This number is already registered as a delivery agent.",
+          ToastAndroid.LONG
+        );
+        break;
+      default:
+        ToastAndroid.show("Error", ToastAndroid.LONG);
+        console.log(error);
+        break;
+    }
+    dispatch(resetRequestStatus());
+  }
 
   return (
     <View style={styles.container}>
@@ -73,8 +91,9 @@ export default function LoginScreen({ navigation, route }) {
             />
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={() => login()}
+              onPress={() => onClickLogin()}
               activeOpacity={0.9}
+              disabled={disabled}
             >
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>

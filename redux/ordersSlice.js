@@ -48,14 +48,15 @@ export const placeOrder = createAsyncThunk(
 
 export const cancelOrder = createAsyncThunk(
   "orders/placeOrder",
-  async (data, { getState }) => {
+  async ({ index }, { getState }) => {
     const token = getState().client.token;
     try {
       const response = await call(
-        cancelPickupRequest(token, getState().orders.picking.id)
+        cancelPickupRequest(token, getState().orders.picking[index].id)
       );
       return {
         success: true,
+        index,
       };
     } catch (error) {
       return {
@@ -256,145 +257,140 @@ const ordersSlice = createSlice({
         state.status = "succeeded";
         state.waiting.push(action.payload.order);
       } else {
+        state.status = "failed";
         state.error = action.payload.error;
       }
-      state.loading = false;
     },
     [placeOrder.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },
-    [login.pending]: (state, action) => {
-      state.loggingInStatus = "loading";
-    },
-    [login.fulfilled]: (state, action) => {
-      if (action.payload.sent) {
-        state.phone = action.payload.phone;
-        state.loggingIn = true;
-        state.loggingInStatus = "succeeded";
-      } else {
-        state.loggingInStatus = "failed";
-        state.error = action.payload.error;
-      }
-    },
-    [login.rejected]: (state, action) => {
-      state.loggingInStatus = "failed";
-      state.error = action.error.message;
-    },
-    [verify.pending]: (state, action) => {
+    [cancelOrder.pending]: (state, action) => {
       state.status = "loading";
     },
-    [verify.fulfilled]: (state, action) => {
-      if (action.payload.loggedIn) {
-        state.token = action.payload.token;
-        state.status = "succeeded";
-        state.phone = action.payload.phone;
-        state.loggedIn = true;
-      } else {
-        state.status = "failed";
-        state.error = action.payload.error;
-      }
-    },
-    [verify.rejected]: (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    },
-    [loadClient.pending]: (state, action) => {
-      state.status = "loading";
-    },
-    [loadClient.fulfilled]: (state, action) => {
-      state.status = "succeeded";
-      if (action.payload.loggedIn) {
-        state.name = action.payload.client.name;
-        state.phone = action.payload.client.phone;
-        state.call_before_delivery = action.payload.client.call_before_delivery;
-        state.loggedIn = true;
-      } else {
-        state.loggedIn = false;
-      }
-    },
-    [loadClient.rejected]: (state, action) => {
-      state.status = "failed";
-      state.loggedIn = false;
-      state.error = action.error.message;
-    },
-    [setCallBeforeDelivery.pending]: (state, action) => {
-      state.status = "loading";
-    },
-    [setCallBeforeDelivery.fulfilled]: (state, action) => {
+    [cancelOrder.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
-        state.call_before_delivery = action.payload.value;
+        state.waiting.splice(action.payload.index, 1);
       } else {
         state.status = "failed";
         state.error = action.payload.error;
       }
     },
-    [setCallBeforeDelivery.rejected]: (state, action) => {
+    [cancelOrder.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },
-    [setName.pending]: (state, action) => {
+    [loadWaiting.pending]: (state, action) => {
       state.status = "loading";
     },
-    [setName.fulfilled]: (state, action) => {
+    [loadWaiting.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
-        state.name = action.payload.name;
+        state.waiting = action.payload.orders;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
       }
     },
-    [setName.rejected]: (state, action) => {
+    [loadWaiting.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },
-    [loadAddresses.pending]: (state, action) => {
+    [loadPicking.pending]: (state, action) => {
       state.status = "loading";
     },
-    [loadAddresses.fulfilled]: (state, action) => {
+    [loadPicking.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
-        state.addresses = action.payload.addresses;
+        state.picking = action.payload.orders;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
       }
     },
-    [loadAddresses.rejected]: (state, action) => {
+    [loadPicking.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },
-    [addAddress.pending]: (state, action) => {
+    [loadServing.pending]: (state, action) => {
       state.status = "loading";
     },
-    [addAddress.fulfilled]: (state, action) => {
+    [loadServing.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
-        state.addresses.push(action.payload.address);
+        state.serving = action.payload.orders;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
       }
     },
-    [addAddress.rejected]: (state, action) => {
+    [loadServing.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },
-    [deleteAddress.pending]: (state, action) => {
+    [loadDelivering.pending]: (state, action) => {
       state.status = "loading";
     },
-    [deleteAddress.fulfilled]: (state, action) => {
+    [loadDelivering.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
-        state.addresses.splice(action.payload.index, 1);
+        state.delivering = action.payload.orders;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
       }
     },
-    [deleteAddress.rejected]: (state, action) => {
+    [loadDelivering.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
+    [loadArchived.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [loadArchived.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.status = "succeeded";
+        state.archived = action.payload.orders;
+      } else {
+        state.status = "failed";
+        state.error = action.payload.error;
+      }
+    },
+    [loadArchived.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
+    [loadOrderItems.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [loadOrderItems.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.status = "succeeded";
+        state[action.payload.status][action.payload.index].items =
+          action.payload.items;
+      } else {
+        state.status = "failed";
+        state.error = action.payload.error;
+      }
+    },
+    [loadOrderItems.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
+    [rateOrder.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [rateOrder.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.status = "succeeded";
+        state.archived[action.payload.index].rating = action.payload.rating;
+      } else {
+        state.status = "failed";
+        state.error = action.payload.error;
+      }
+    },
+    [rateOrder.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },

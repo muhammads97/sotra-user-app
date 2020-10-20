@@ -51,18 +51,26 @@ export class OTP4DigitsInput extends React.Component {
       if (text.length == 1) {
         this.ref2.current.focus();
       }
-      this.setState({ d1: text });
+      this.setState({ d1: text }, () => {
+        this.props.onChangeText(this.getText());
+      });
     }
     if (t == 3) {
       if (text.length == 1) this.ref3.current.focus();
-      this.setState({ d2: text });
+      this.setState({ d2: text }, () => {
+        this.props.onChangeText(this.getText());
+      });
     }
     if (t == 4) {
       if (text.length == 1) this.ref4.current.focus();
-      this.setState({ d3: text });
+      this.setState({ d3: text }, () => {
+        this.props.onChangeText(this.getText());
+      });
     }
     if (t == 0) {
-      this.setState({ d4: text });
+      this.setState({ d4: text }, () => {
+        this.props.onChangeText(this.getText());
+      });
     }
     // console.log("digits: ", this.d1, this.d2, this.d3, this.d4);
   }
