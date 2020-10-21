@@ -19,7 +19,7 @@ export default function RoundEdgeButton({ style, onPress, textStyle, text }) {
       activeOpacity={0.7}
       onPress={onPress}
     >
-      <Text style={[textStyle, styles.buttonText]}>{text}</Text>
+      <Text style={[styles.buttonText, textStyle]}>{text}</Text>
     </TouchableOpacity>
   );
 }

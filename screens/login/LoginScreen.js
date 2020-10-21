@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { adjustPhone, isValidPhoneNumber } from "../../helpers/phone";
 import styles from "./style";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login, resetRequestStatus } from "../../redux/clientSlice";
 
 export default function LoginScreen(props) {

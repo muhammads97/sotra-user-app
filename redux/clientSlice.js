@@ -26,6 +26,7 @@ const initialState = {
   token: "000",
   cached: false,
   addresses: [],
+  balance: 0,
 };
 
 export const initialization = createAsyncThunk(
@@ -104,6 +105,12 @@ export const loadClient = createAsyncThunk(
     let token = getState().client.token;
     try {
       const response = await call(getClientRequest(token));
+      if (response.data.client.name != getState().client.name) {
+        if (getState().client.name != null && getState().client.name != "") {
+          await call(updateNameRequest(token, getState().client.name));
+          response.data.client.name = getState().client.name;
+        }
+      }
       return {
         client: response.data.client,
         loggedIn: true,

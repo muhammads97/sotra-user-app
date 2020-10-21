@@ -6,14 +6,15 @@ import HomeScreen from "./home/HomeScreen";
 import LoginScreen from "./login/LoginScreen";
 import VerificationScreen from "./verification/VerificationScreen";
 import BottomTabNavigator from "../navigation/BottomTabNavigator";
+import OrderConfirmationScreen from "./orderConfirmation/OrderConfirmationScreen";
 
 const Stack = createStackNavigator();
 
 export default function Root() {
-  const loggedIn = useSelector((state) => state.service.loggedIn);
-  const loading = useSelector((state) => state.service.loading);
-  const error = useSelector((state) => state.service.error);
-  const status = useSelector((state) => state.service.status);
+  const loggedIn = useSelector((state) => state.client.loggedIn);
+  const loading = useSelector((state) => state.client.loading);
+  const error = useSelector((state) => state.client.error);
+  const status = useSelector((state) => state.client.status);
   if (loading) {
     return null;
   }
@@ -28,6 +29,10 @@ export default function Root() {
         >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BottomTab" component={BottomTabNavigator} />
+          <Stack.Screen
+            name="OrderConfirmation"
+            component={OrderConfirmationScreen}
+          />
           {/* <Stack.Screen name="Map" component={Map} /> */}
           {/* <Stack.Screen name="Archive" component={Archived} /> */}
           {/* <Stack.Screen name="Stat" component={StatisticsScreen} /> */}

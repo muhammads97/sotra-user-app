@@ -17,21 +17,18 @@ import { resetRequestStatus, verify } from "../../redux/clientSlice";
 import { isValidVerificationCode } from "../../helpers/phone";
 import styles from "./style";
 
-const screenWidth = Math.round(Dimensions.get("window").width);
-const screenHeight = Math.round(Dimensions.get("window").height);
-const mb = Math.round(0.065 * screenWidth);
-
 export default function VerificationScreen(props) {
   const dispatch = useDispatch();
   const phone = useSelector((state) => state.client.phone);
   const name = useSelector((state) => state.client.name);
-  const status = useSelector((state) => state.service.status);
-  const error = useSelector((state) => state.service.error);
+  const status = useSelector((state) => state.client.status);
+  const error = useSelector((state) => state.client.error);
   const maxTimer = 60;
   let currentTimer = 60;
   const [timerText, setTimerText] = React.useState("00 : 00");
   const [code, setCode] = React.useState("");
   const [activeResend, setActiveResend] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
   let timer;
 
   if (status == "failed") {
@@ -70,12 +67,14 @@ export default function VerificationScreen(props) {
     return min + " : " + sec;
   };
   const onPressSubmit = async () => {
+    setDisabled(true);
     dispatch(resetRequestStatus());
     if (isValidVerificationCode(code)) {
       dispatch(verify({ phone, code }));
     } else {
       ToastAndroid.show("Please enter a valid code", ToastAndroid.LONG);
     }
+    setDisabled(false);
   };
 
   const resend = async () => {
@@ -155,6 +154,7 @@ export default function VerificationScreen(props) {
               style={styles.verifyButton}
               onPress={() => onPressSubmit()}
               activeOpacity={0.9}
+              disabled={disabled}
             >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>

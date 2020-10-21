@@ -18,7 +18,7 @@ export default function HomeScreen(props) {
   }
 
   const orderNow = () => {
-    props.navigation.navigate("SelectAddress");
+    props.navigation.navigate("OrderConfirmation");
   };
   React.useEffect(() => {
     dispatch(resetRequestStatus());

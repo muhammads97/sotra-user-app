@@ -4,7 +4,7 @@ import Colors from "../../constants/Colors";
 const screenWidth = Math.round(Dimensions.get("window").width);
 const SBHeight = StatusBar.currentHeight;
 const screenHeight = Math.round(Dimensions.get("window").height) - SBHeight;
-const headerHeight = 0.239 * screenHeight;
+const mb = Math.round(0.065 * screenWidth);
 
 const styles = StyleSheet.create({
   container: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
   verifyButton: {
     alignSelf: "center",
-    borderColor: Colors.default.primary,
+    borderColor: Colors.primary,
     borderWidth: 1,
     marginTop: 19,
     width: "77%",
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   buttonText: {
-    color: Colors.default.primary,
+    color: Colors.primary,
     fontSize: 17,
     fontFamily: "poppins-regular",
     marginTop: 2,
@@ -91,13 +91,13 @@ const styles = StyleSheet.create({
   code: {
     fontFamily: "poppins-extra-light",
     fontSize: 10,
-    color: Colors.default.input,
+    color: Colors.input,
     marginTop: 10,
   },
   resendText: {
     fontFamily: "poppins-light",
     fontSize: 15,
-    color: Colors.default.primary,
+    color: Colors.primary,
     textDecorationLine: "underline",
     marginBottom: 2,
   },
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   counter: {
     fontSize: 15,
     fontFamily: "poppins-light",
-    color: Colors.default.input,
+    color: Colors.input,
     marginRight: 3,
     marginBottom: 2,
   },
