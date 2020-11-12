@@ -33,14 +33,13 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
     fontSize: 0.03 * screenHeight,
     color: "#fff",
-    marginLeft: "6.5%",
-    marginTop: 2,
+    margin: "6.5%",
+    // marginTop: 2,
   },
   headerIcon: {
     width: 0.0835 * screenWidth,
     height: 0.087193 * screenWidth,
     position: "absolute",
-    right: 0.032 * screenWidth,
   },
   scroll: {
     flexGrow: 1,
@@ -67,6 +66,12 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginBottom: 30,
     marginTop: 30,
+  },
+  buttonSection: {
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexGrow: 1,
   },
 });
 

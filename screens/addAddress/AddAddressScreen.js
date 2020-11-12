@@ -1,16 +1,28 @@
 import * as React from "react";
-import { View, Text, Platform, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Platform,
+  TouchableOpacity,
+  Alert,
+  Dimensions,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FloatingTitleTextInputField from "../../components/inputs/FloatingPlaceholderTextInput";
 import Icons from "../../constants/Icons";
 import Header from "../../components/header/Header";
+import Translations from "../../constants/Translations";
+
 import styles from "./style";
 import RoundEdgeButton from "../../components/button/RoundEdge";
+import { useDispatch, useSelector } from "react-redux";
+import { resetRequestStatus } from "../../redux/clientSlice";
+const screenWidth = Math.round(Dimensions.get("window").width);
 
-export default function AddAddressScreen({ navigation, route }) {
-  const backText = route.params.backText;
-  const headerText = route.params.headerText;
-  const onBack = route.params.onBack;
+export default function AddAddressScreen(props) {
+  const dispatch = useDispatch();
+  const rtl = useSelector((state) => state.client.rtl);
+  const backText = props.route.params.backText;
 
   const [name, setName] = React.useState("");
   const [street, setStreet] = React.useState("");
@@ -28,30 +40,32 @@ export default function AddAddressScreen({ navigation, route }) {
       Alert.alert("Error", "please specify which floor you live in.");
       return;
     }
-    navigation.navigate("SelectLocation", {
+    dispatch(resetRequestStatus());
+    props.navigation.navigate("SelectLocation", {
       state: {
         name: name.length == 0 ? "Home" : name,
         street,
-        building,
+        building_number: building,
         floor,
-        apartment,
-        directions,
+        apt: apartment,
+        additional_directions: directions,
       },
-      backName: "Add Address",
-      headerText: "Select Location",
-      onBack: onBack,
+      backText: Translations.t("addAddress"),
     });
   };
 
   return (
     <View style={styles.container}>
       <Header
-        nav={navigation}
+        nav={props.navigation}
         backText={backText}
         elevation={0}
         icon={Icons.hanger}
-        text={headerText}
-        iconStyle={styles.headerIcon}
+        text={Translations.t("addNewAddress")}
+        iconStyle={[
+          styles.headerIcon,
+          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+        ]}
       />
       <KeyboardAwareScrollView
         enableOnAndroid={true}
@@ -61,32 +75,32 @@ export default function AddAddressScreen({ navigation, route }) {
         scrollEventThrottle={16}
       >
         <FloatingTitleTextInputField
-          title={"Name (Home)"}
+          title={Translations.t("addressName")}
           onChangeText={(text) => setName(text)}
         ></FloatingTitleTextInputField>
         <FloatingTitleTextInputField
-          title={"Street Address"}
+          title={Translations.t("streetAddress")}
           onChangeText={(text) => setStreet(text)}
         ></FloatingTitleTextInputField>
         <FloatingTitleTextInputField
-          title={"Building Number"}
+          title={Translations.t("buildingNumber")}
           onChangeText={(text) => setBuilding(text)}
         ></FloatingTitleTextInputField>
         <FloatingTitleTextInputField
-          title={"Floor"}
+          title={Translations.t("floor")}
           onChangeText={(text) => setFloor(text)}
         ></FloatingTitleTextInputField>
         <FloatingTitleTextInputField
-          title={"Appartment Number"}
+          title={Translations.t("aptNumber")}
           onChangeText={(text) => setApartment(text)}
         ></FloatingTitleTextInputField>
         <FloatingTitleTextInputField
-          title={"Additional Directions"}
+          title={Translations.t("additionalDir")}
           onChangeText={(text) => setDirections(text)}
         ></FloatingTitleTextInputField>
         <View style={styles.footer}>
           <RoundEdgeButton
-            text={"Save Address"}
+            text={Translations.t("saveAddress")}
             onPress={() => onPressSave()}
           />
         </View>

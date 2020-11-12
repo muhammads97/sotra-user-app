@@ -16,42 +16,45 @@ import Icons from "../../constants/Icons";
 import styles from "./style";
 import Header from "../../components/header/Header";
 import Colors from "../../constants/Colors";
+import Translations from "../../constants/Translations";
 import CurrentLocation from "../locations/currentLocationButton";
 import RoundEdgeButton from "../../components/button/RoundEdge";
+import { useDispatch, useSelector } from "react-redux";
+import { resetRequestStatus, addAddress } from "../../redux/clientSlice";
+const screenWidth = Math.round(Dimensions.get("window").width);
 
-export default class SelectLocationScreen extends React.Component {
-  constructor({ navigation, route }) {
-    super();
-    this.navigation = navigation;
-    this.backName = route.params.backName;
-    this.headerText = route.params.headerText;
-    this.onBack = route.params.onBack;
-    this.address = route.params.state;
-    this.state = {
-      region: {
-        longitude: 30.20485,
-        latitude: 27.79961,
-        longitudeDelta: 11,
-        latitudeDelta: 8,
-      },
-      mapStyle: {},
-    };
-    this.map = React.createRef();
-  }
+export default function SelectLocationScreen(props) {
+  const dispatch = useDispatch();
+  const status = useSelector((state) => state.client.status);
+  const error = useSelector((state) => state.client.error);
+  const rtl = useSelector((state) => state.client.rtl);
+  const backText = props.route.params.backText;
+  let address = props.route.params.state;
+  const [region, setRegion] = React.useState({
+    longitude: 30.20485,
+    latitude: 27.79961,
+    longitudeDelta: 11,
+    latitudeDelta: 8,
+  });
 
-  async componentDidMount() {
-    let locationPermission = await Permissions.getAsync(Permissions.LOCATION);
-    if (locationPermission.status != "granted") {
-      let locationPermission2 = await Permissions.askAsync(
-        Permissions.LOCATION
-      );
-      if (locationPermission2.status == "granted") {
-      } else {
-        throw new Error("Location permission not granted");
+  const map = React.useRef();
+
+  React.useEffect(() => {
+    dispatch(resetRequestStatus());
+    Permissions.getAsync(Permissions.LOCATION).then((locationPermission) => {
+      if (locationPermission.status != "granted") {
+        Permissions.askAsync(Permissions.LOCATION)
+          .then((locationPermission2) => {
+            if (locationPermission2.status != "granted") {
+              throw new Error("Location permission not granted");
+            }
+          })
+          .catch((reason) => console.log(reason));
       }
-    }
-  }
-  async setLocationState() {
+    });
+  }, []);
+
+  const setLocationState = async () => {
     let location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
       mapContainer: 5000,
@@ -63,68 +66,65 @@ export default class SelectLocationScreen extends React.Component {
       longitudeDelta: 0.002,
       latitudeDelta: 0.002,
     };
-    this.map.current.animateToRegion(region, 1500);
+    map.current.animateToRegion(region, 1500);
+  };
+
+  const onRegionChange = (region) => {
+    setRegion(region);
+  };
+  const onPressSave = () => {
+    address.latitude = region.latitude;
+    address.longitude = region.longitude;
+    dispatch(addAddress({ address }));
+  };
+
+  if (status == "succeeded") {
+    setTimeout(() => {
+      props.navigation.goBack();
+      props.navigation.goBack();
+    }, 10);
   }
 
-  onRegionChange(region) {
-    this.setState({ region: region });
-  }
-  async onPressSave() {
-    this.address.latitude = this.state.region.latitude;
-    this.address.longitude = this.state.region.longitude;
-    if (await globalThis.client.addAddress(this.address)) {
-      setTimeout(() => {
-        this.navigation.goBack();
-        this.navigation.goBack();
-        this.onBack();
-      }, 10);
-    }
-  }
-  onMapReady() {
-    this.setState({ mapStyle: styles.mapStyle }, () => {
-      setTimeout(() => this.setLocationState(), 10);
-    });
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <Header
-          nav={this.navigation}
-          backText={this.backName}
-          elevation={0}
-          text={this.headerText}
-          icon={Icons.hanger}
-          style={{ backgroundColor: Colors.primary }}
-          iconStyle={styles.headerIcon}
-          textStyle={styles.headerText}
-        />
-        <View style={styles.mapOuterContainer}>
-          <View style={styles.mapContainer}>
-            <MapView
-              ref={this.map}
-              style={styles.mapStyle}
-              onMapReady={() => this.onMapReady()}
-              zoomEnabled={true}
-              showsCompass={true}
-              showsUserLocation={true}
-              onRegionChangeComplete={this.onRegionChange.bind(this)}
-            ></MapView>
-            <Image
-              source={Icons.locationTag}
-              resizeMode={"contain"}
-              style={styles.picker}
-            />
-            <CurrentLocation onPress={() => this.setLocationState()} />
-          </View>
-        </View>
-        <View style={styles.footer}>
-          <RoundEdgeButton
-            text={"Save Address"}
-            onPress={() => this.onPressSave()}
+  return (
+    <View style={styles.container}>
+      <Header
+        nav={props.navigation}
+        backText={backText}
+        elevation={0}
+        text={Translations.t("selectLocation")}
+        icon={Icons.hanger}
+        style={{ backgroundColor: Colors.primary }}
+        iconStyle={[
+          styles.headerIcon,
+          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+        ]}
+        textStyle={styles.headerText}
+      />
+      <View style={styles.mapOuterContainer}>
+        <View style={styles.mapContainer}>
+          <MapView
+            ref={map}
+            style={styles.mapStyle}
+            zoomEnabled={true}
+            showsCompass={true}
+            showsUserLocation={true}
+            onRegionChangeComplete={(reg) => onRegionChange(reg)}
+            onMapReady={() => setLocationState()}
+          ></MapView>
+          <Image
+            source={Icons.locationTag}
+            resizeMode={"contain"}
+            style={styles.picker}
           />
+          <CurrentLocation onPress={() => setLocationState()} />
         </View>
       </View>
-    );
-  }
+      <View style={styles.footer}>
+        <RoundEdgeButton
+          text={Translations.t("saveAddress")}
+          onPress={() => onPressSave()}
+        />
+      </View>
+    </View>
+  );
 }

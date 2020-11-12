@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
     // marginTop: 15,
     // flexShrink: 1,
   },
+  toggleSmall: {
+    width: 0.11 * screenWidth,
+  },
   balanceAmount: {
     fontFamily: "poppins-regular",
     fontSize: 0.05 * screenWidth,
@@ -192,7 +195,6 @@ const styles = StyleSheet.create({
     width: 0.197 * screenWidth,
     height: 0.16202 * screenWidth,
     position: "absolute",
-    right: 0.018334 * screenWidth,
     top: 0.01375 * screenHeight,
   },
   buttonListItem: {
@@ -226,6 +228,21 @@ const styles = StyleSheet.create({
   confirmationBtn: {
     marginBottom: 0,
     marginTop: 0,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 0.8527 * screenWidth,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 20,
+    alignItems: "center",
+  },
+  wedding: {
+    fontFamily: "poppins-light",
+    fontSize: 0.03 * screenWidth,
+    color: Colors.back,
+    textAlign: "left",
   },
 });
 

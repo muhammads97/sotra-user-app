@@ -4,10 +4,10 @@ import * as React from "react";
 import TabBarIcon from "../components/TabBarIcon";
 import OrdersScreen from "../screens/orders/OrdersScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
-import LocationsScreen from "../screens/locations/LocationsScreen";
 import PricingScreen from "../screens/pricing/PricingScreen";
 import { StyleSheet } from "react-native";
 import * as Icons from "../constants/Icons";
+import HelpScreen from "../screens/help/HelpAndSupportScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -17,7 +17,6 @@ export default class BottomTabNavigator extends React.Component {
     this.navigation = navigation;
     this.init = route.params.init;
     this.rootNavigation = route.params.rootNavigation;
-    this.updateUser = route.params.updateUser;
   }
 
   render() {
@@ -49,8 +48,8 @@ export default class BottomTabNavigator extends React.Component {
           }}
         />
         <BottomTab.Screen
-          name="Locations"
-          component={LocationsScreen}
+          name="Help"
+          component={HelpScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <TabBarIcon focused={focused} icon={Icons.default.location} />

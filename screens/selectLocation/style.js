@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
     width: 0.197 * screenWidth,
     height: 0.16202 * screenWidth,
     position: "absolute",
-    right: 0.018334 * screenWidth,
     top: 0.01375 * screenHeight,
   },
   buttonText: {

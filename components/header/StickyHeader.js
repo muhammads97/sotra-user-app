@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Icons from "../../constants/Icons";
 import Colors from "../../constants/Colors";
+import { useSelector } from "react-redux";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -23,6 +24,7 @@ export default function StickyHeader({
   backText,
   headerComponent,
 }) {
+  const rtl = useSelector((state) => state.client.rtl);
   const back = () => {
     if (backTo == null) nav.goBack();
     else nav.navigate(backTo);
@@ -38,7 +40,7 @@ export default function StickyHeader({
         >
           <Image
             source={Icons.back}
-            style={styles.backSymbol}
+            style={[styles.backSymbol, rtl && { transform: [{ scale: -1 }] }]}
             resizeMode={"contain"}
           />
           <Text style={styles.goBack}>{backText}</Text>

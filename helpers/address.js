@@ -1,3 +1,4 @@
+import Trans from "../constants/Translations";
 export const formatAddress = (address) => {
   let building = address.building_number.toString();
   let streetAddress = address.street;
@@ -12,10 +13,10 @@ export const formatAddress = (address) => {
     address += streetAddress + ". ";
   }
   if (apt != null && apt.length > 0) {
-    address += "Apartment NO. " + apt;
+    address += Trans.t("apartmentNO") + apt;
   }
   if (floor != null && floor.length > 0) {
-    address += ", Floor NO. " + floor + ". ";
+    address += Trans.t("comma") + " " + Trans.t("floorNO") + floor + ". ";
   }
   if (directions != null && directions.length > 0) {
     address += "(" + directions + ")";

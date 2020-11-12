@@ -1,10 +1,17 @@
 const root = "https://sotra-app.com/";
-const api_version = "api/v1/";
+const api_version = "api/v2/";
 const base = root + api_version;
 
-export function placeOrderRequest(token, address_id) {
+export function placeOrderRequest(
+  token,
+  address_id,
+  promocode,
+  pay_with_wallet,
+  time_slot_id,
+  has_wedding_dress
+) {
   return {
-    url: `${base}pickup`,
+    url: `${base}orders`,
     type: "POST",
     options: {
       headers: {
@@ -16,13 +23,17 @@ export function placeOrderRequest(token, address_id) {
     },
     data: {
       address_id,
+      promocode,
+      pay_with_wallet,
+      time_slot_id,
+      has_wedding_dress,
     },
   };
 }
 
 export function getWaitingRequest(token) {
   return {
-    url: `${base}pickups/status/waiting`,
+    url: `${base}orders?status=waiting`,
     type: "GET",
     options: {
       headers: {
@@ -36,7 +47,7 @@ export function getWaitingRequest(token) {
 }
 export function getPickingRequest(token) {
   return {
-    url: `${base}orders/picking`,
+    url: `${base}orders?status=picking`,
     type: "GET",
     options: {
       headers: {
@@ -51,7 +62,7 @@ export function getPickingRequest(token) {
 
 export function getServingRequest(token) {
   return {
-    url: `${base}orders/serving`,
+    url: `${base}orders?status=serving`,
     type: "GET",
     options: {
       headers: {
@@ -65,7 +76,7 @@ export function getServingRequest(token) {
 }
 export function getDeliveringRequest(token) {
   return {
-    url: `${base}orders/delivering`,
+    url: `${base}orders?status=delivering`,
     type: "GET",
     options: {
       headers: {
@@ -78,9 +89,9 @@ export function getDeliveringRequest(token) {
   };
 }
 
-export function getArchivedRequest(token) {
+export function getArchivedRequest(token, page, perPage) {
   return {
-    url: `${base}orders/archived`,
+    url: `${base}orders?status=archived&page=${page}&per_page=${perPage}`,
     type: "GET",
     options: {
       headers: {
@@ -126,9 +137,9 @@ export function rateOrderRequest(token, order_id, rating) {
   };
 }
 
-export function cancelPickupRequest(token, pickup_id) {
+export function cancelPickupRequest(token, order_id) {
   return {
-    url: `${base}cancel_pickup/${pickup_id}`,
+    url: `${base}orders/${order_id}/cancel`,
     type: "PATCH",
     options: {
       headers: {

@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     fontSize: 0.045 * screenWidth,
     fontFamily: "poppins-regular",
     color: "#fff",
-    lineHeight: 0.052 * screenWidth,
+    // lineHeight: 0.052 * screenWidth,
     margin: 0.03333 * screenWidth,
-    marginTop: 0.05 * screenWidth,
+    marginTop: 0.04 * screenWidth,
     letterSpacing: 0,
   },
   card: {

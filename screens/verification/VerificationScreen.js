@@ -13,9 +13,10 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { OTP4DigitsInput } from "../../components/OTPInput";
 import { useDispatch, useSelector } from "react-redux";
-import { resetRequestStatus, verify } from "../../redux/clientSlice";
+import { resetRequestStatus, verify, login } from "../../redux/clientSlice";
 import { isValidVerificationCode } from "../../helpers/phone";
 import styles from "./style";
+import Colors from "../../constants/Colors";
 
 export default function VerificationScreen(props) {
   const dispatch = useDispatch();
@@ -80,7 +81,7 @@ export default function VerificationScreen(props) {
   const resend = async () => {
     setActiveResend(false);
     startTimer();
-    dispatch(login({ phone, name }));
+    dispatch(login({ phone }));
   };
 
   const startTimer = () => {
@@ -104,13 +105,12 @@ export default function VerificationScreen(props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <StatusBar backgroundColor={Colors.primary} />
+      <View
         style={styles.container}
         contentContainerStyle={styles.container}
         scrollEventThrottle={16}
       >
-        <StatusBar hidden={true} />
-
         <View style={styles.verify}>
           <View style={styles.box}>
             <Text style={styles.verificationText}>Verification</Text>
@@ -160,7 +160,7 @@ export default function VerificationScreen(props) {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }

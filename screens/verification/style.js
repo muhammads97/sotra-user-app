@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   box: {
     width: "100%",
-    height: screenHeight - mb - 350,
+    flexGrow: 1,
     backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",

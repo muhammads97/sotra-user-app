@@ -1,5 +1,5 @@
 const root = "https://sotra-app.com/";
-const api_version = "api/v1/";
+const api_version = "api/v2/";
 const base = root + api_version;
 
 export function loginRequest(phone) {

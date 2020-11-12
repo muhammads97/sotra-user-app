@@ -14,20 +14,20 @@ import { adjustPhone, isValidPhoneNumber } from "../../helpers/phone";
 import styles from "./style";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetRequestStatus } from "../../redux/clientSlice";
+import Colors from "../../constants/Colors";
 
 export default function LoginScreen(props) {
   const dispatch = useDispatch();
   const loggingInStatus = useSelector((state) => state.client.loggingInStatus);
   const error = useSelector((state) => state.client.error);
-  const [phone, setPhone] = React.useState("");
-  const [username, setUsername] = React.useState("");
+  const [phone, setPhone] = React.useState("01234567890");
   const [disabled, setDisabled] = React.useState(false);
 
   const onClickLogin = async () => {
     setDisabled(true);
     let pNum = adjustPhone(phone);
     if (isValidPhoneNumber(pNum)) {
-      dispatch(login({ phone: pNum, name: username }));
+      dispatch(login({ phone: pNum }));
     } else {
       ToastAndroid.show("Please enter a valid number", ToastAndroid.LONG);
     }
@@ -57,12 +57,8 @@ export default function LoginScreen(props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.container}
-        scrollEventThrottle={16}
-      >
-        <StatusBar hidden={true} />
+      <StatusBar backgroundColor={Colors.primary} />
+      <View style={styles.container}>
         <View style={styles.login}>
           <View style={styles.logo}>
             <Image
@@ -74,13 +70,6 @@ export default function LoginScreen(props) {
             />
           </View>
           <View style={styles.card}>
-            <TextInput
-              autoFocus={true}
-              placeholder={"User Name"}
-              style={styles.input1}
-              onChangeText={(text) => setUsername(text)}
-              scrollEnabled={false}
-            />
             <TextInput
               style={styles.input2}
               placeholder={"Mobile Number"}
@@ -98,7 +87,7 @@ export default function LoginScreen(props) {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }

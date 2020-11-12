@@ -9,10 +9,13 @@ import {
   StatusBar,
   Switch,
   Platform,
+  Share,
+  Picker,
 } from "react-native";
 import Colors from "../../constants/Colors";
 import Icons from "../../constants/Icons";
-import { makeAddress } from "../../helpers/address";
+import trans from "../../constants/Translations";
+import { makeAddress, formatAddress } from "../../helpers/address";
 import {
   ScrollView,
   TextInput,
@@ -21,28 +24,40 @@ import {
 import Toggle from "../../components/Toggle";
 import Header from "../../components/header/Header";
 import styles from "./style";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loadAddresses,
+  setAddressesCached,
+  setCallBeforeDelivery,
+  setName,
+  deleteAddress,
+  setLanguage,
+} from "../../redux/clientSlice";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const SBHeight = StatusBar.currentHeight;
 const screenHeight = Math.round(Dimensions.get("window").height) - SBHeight;
 
 export default function ProfileScreen({ navigation, route }) {
+  const dispatch = useDispatch();
+  const addresses = useSelector((state) => state.client.addresses);
+  const addressesCached = useSelector((state) => state.client.addressesCached);
+  const name = useSelector((state) => state.client.name);
+  const cbd = useSelector((state) => state.client.call_before_delivery);
+  const referralCode = useSelector((state) => state.client.referral_code);
+  const balance = useSelector((state) => state.client.balance);
+  const language = useSelector((state) => state.client.language);
+  const rtl = useSelector((state) => state.client.rtl);
+
   const rootNav = route.params.rootNav;
-  const rootUpdateUser = route.params.updateUser;
-  const [addresses, setAddresses] = React.useState([]);
-  const [loading, setLoadning] = React.useState(true);
   const [addressFont, setAddressFont] = React.useState(0.017 * screenHeight);
   const [headerElevation, setHeaderElevation] = React.useState(0);
-  const [name, setName] = React.useState("");
-  const [cbd, setCBD] = React.useState(false);
-  const backText = "Home Page";
-  const headerText = "Profile Settings";
+  const backText = trans.t("homePage");
+  const headerText = trans.t("profileSettings");
 
   const onPressAddAddress = () => {
     rootNav.navigate("AddAddress", {
       backText: "Profile Settings",
-      headerText: "Address",
-      onBack: () => loadAddresses(),
     });
   };
 
@@ -54,38 +69,18 @@ export default function ProfileScreen({ navigation, route }) {
   };
 
   const load = async () => {
-    setName(globalThis.client.getName());
-    setCBD(globalThis.client.getCBD());
-    loadAddresses();
-  };
-  const loadAddresses = async () => {
-    let addrs = await globalThis.client.getAddresses();
-    if (addrs != null) {
-      let l = [];
-      for (let i = 0; i < addrs.length; i++) {
-        let obj = {
-          key: i,
-          value: {
-            id: addrs[i].id,
-            name: addrs[i].name,
-            street: makeAddress(addrs[i]),
-          },
-        };
-        l[i] = obj;
-      }
-      setAddresses(l);
-    }
+    dispatch(loadAddresses());
   };
 
   React.useEffect(() => {
-    load();
+    if (!addressesCached) {
+      load();
+      dispatch(setAddressesCached(true));
+    }
   }, []);
 
-  const toggleCBD = async (value) => {
-    let v = await globalThis.client.updateUser(name, value);
-    if (v) {
-      setCBD(value);
-    }
+  const toggleCBD = (value) => {
+    dispatch(setCallBeforeDelivery({ value }));
   };
   const FlatListItemSeparator = () => {
     return (
@@ -102,29 +97,22 @@ export default function ProfileScreen({ navigation, route }) {
     );
   };
 
-  const updateUsername = async (name) => {
-    setName(name);
-    let v = await globalThis.client.updateUser(name, cbd);
-    if (v) {
-      rootUpdateUser();
-    }
+  const updateName = async (name) => {
+    dispatch(setName({ name }));
   };
-  const deleteAddress = (address) => {
+  const onClickDeleteAddress = (index) => {
     Alert.alert(
-      "Delete " + address.name + "?",
-      "Are you sure you want to delete your address (" + address.name + ")?",
+      trans.t("delete") + " " + addresses[index].name + "?",
+      trans.t("deleteConfirmMsg") + " (" + addresses[index].name + ")?",
       [
         {
-          text: "Delete",
-          onPress: async () => {
-            let v = await globalThis.client.deleteAddress(address.id);
-            if (v) {
-              loadAddresses();
-            }
+          text: trans.t("delete"),
+          onPress: () => {
+            dispatch(deleteAddress({ index }));
           },
         },
         {
-          text: "Cancel",
+          text: trans.t("cancel"),
         },
       ]
     );
@@ -138,6 +126,19 @@ export default function ProfileScreen({ navigation, route }) {
     }
   };
 
+  const shareReferral = () => {
+    Share.share({
+      title: trans.t("shareReferralTitle"),
+      url: "https://play.google.com/store/apps/details?id=com.sotra.user",
+      message:
+        "https://play.google.com/store/apps/details?id=com.sotra.user\n" +
+        trans.t("shareReferralMsg1") +
+        trans.t("shareReferralMsg2") +
+        referralCode +
+        trans.t("shareReferralMsg2"),
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -148,7 +149,10 @@ export default function ProfileScreen({ navigation, route }) {
         style={{ backgroundColor: Colors.profile }}
         textStyle={styles.headerText}
         text={headerText}
-        iconStyle={styles.headerIcon}
+        iconStyle={[
+          styles.headerIcon,
+          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+        ]}
       />
 
       <ScrollView
@@ -160,7 +164,7 @@ export default function ProfileScreen({ navigation, route }) {
         scrollEventThrottle={16}
       >
         <View style={styles.toggleView}>
-          <Text style={styles.toggleText}>Call Me Before Delivery</Text>
+          <Text style={styles.toggleText}>{trans.t("callBeforeDelivery")}</Text>
           {Platform.OS == "ios" ? (
             <Switch
               trackColor={{ false: Colors.track.off, true: Colors.track.on }}
@@ -184,17 +188,58 @@ export default function ProfileScreen({ navigation, route }) {
           )}
         </View>
         <View style={styles.usernameView}>
-          <Text style={styles.usernameText}>Username</Text>
+          <Text style={styles.usernameText}>{trans.t("name")}</Text>
           <TextInput
-            style={styles.usernameInput}
+            style={[
+              styles.usernameInput,
+              rtl
+                ? { writingDirection: "rtl", textAlign: "right" }
+                : { writingDirection: "ltr", textAlign: "left" },
+            ]}
             value={name}
-            placeholder={"Your Name"}
-            onChangeText={(value) => updateUsername(value)}
+            placeholder={trans.t("yourName")}
+            onChangeText={(value) => updateName(value)}
           />
         </View>
+        <View style={styles.balanceView}>
+          <View
+            style={[
+              styles.balanceSection,
+              rtl ? { borderLeftWidth: 1 } : { borderRightWidth: 1 },
+            ]}
+          >
+            <Text style={styles.balanceText}>{trans.t("balance")}</Text>
+            <Text style={styles.balanceText}>
+              {balance} {trans.t("LE")}
+            </Text>
+          </View>
+          <View style={styles.referralSection}>
+            <Text style={styles.balanceText}>{trans.t("referralCode")}</Text>
+            <Text style={styles.balanceText}>{referralCode}</Text>
+            <TouchableOpacity
+              style={[
+                styles.shareBtn,
+                rtl ? { marginRight: 140 } : { marginLeft: 140 },
+              ]}
+              activeOpacity={0.8}
+              onPress={() => shareReferral()}
+            >
+              <Image
+                style={styles.shareIcon}
+                source={Icons.share}
+                resizeMode={"contain"}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <Text style={styles.hint} numberOfLines={2}>
+          {trans.t("referralDescription")}
+        </Text>
         <View style={[styles.addressesView]}>
           <View style={styles.addressesHeader}>
-            <Text style={styles.addressesHeaderText}>Addresses</Text>
+            <Text style={styles.addressesHeaderText}>
+              {trans.t("addresses")}
+            </Text>
             <TouchableOpacity
               style={styles.plusButton}
               activeOpacity={0.8}
@@ -208,43 +253,55 @@ export default function ProfileScreen({ navigation, route }) {
             </TouchableOpacity>
           </View>
           {addresses.length == 0 ? (
-            <Text style={styles.noAddresses}>
-              You haven't set any addresses
-            </Text>
+            <Text style={styles.noAddresses}>{trans.t("emptyAddresses")}</Text>
           ) : (
-            <FlatList
-              style={styles.list}
-              data={addresses}
-              ItemSeparatorComponent={FlatListItemSeparator}
-              renderItem={({ item }) => {
+            <>
+              {addresses.map((address, index) => {
                 return (
-                  <View style={styles.addressContainer}>
-                    <View style={styles.addressNameContainer}>
-                      <Text style={styles.addressName}>{item.value.name}</Text>
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        activeOpacity={0.8}
-                        onPress={() => deleteAddress(item.value)}
+                  <>
+                    <View style={styles.addressContainer}>
+                      <View style={styles.addressNameContainer}>
+                        <Text style={styles.addressName}>{address.name}</Text>
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          activeOpacity={0.8}
+                          onPress={() => onClickDeleteAddress(index)}
+                        >
+                          <Image
+                            source={Icons.delete}
+                            resizeMode={"contain"}
+                            style={styles.deleteIcon}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <Text
+                        style={[styles.address, { fontSize: addressFont }]}
+                        onLayout={(e) => reduceFont(e.nativeEvent.layout)}
                       >
-                        <Image
-                          source={Icons.delete}
-                          resizeMode={"contain"}
-                          style={styles.deleteIcon}
-                        />
-                      </TouchableOpacity>
+                        {formatAddress(address)}
+                      </Text>
                     </View>
-                    <Text
-                      style={[styles.address, { fontSize: addressFont }]}
-                      onLayout={(e) => reduceFont(e.nativeEvent.layout)}
-                    >
-                      {item.value.street}
-                    </Text>
-                  </View>
+                  </>
                 );
-              }}
-              keyExtractor={(item) => item.key.toString()}
-            />
+              })}
+            </>
           )}
+        </View>
+        <View style={styles.languageView}>
+          <Text style={styles.toggleText}>{trans.t("language")}</Text>
+          <Picker
+            selectedValue={language}
+            style={{
+              width: 150,
+              color: Colors.back,
+            }}
+            onValueChange={(itemValue, itemIndex) =>
+              dispatch(setLanguage({ language: itemValue }))
+            }
+          >
+            <Picker.Item label={trans.t("english")} value="en" />
+            <Picker.Item label={trans.t("arabic")} value="ar" />
+          </Picker>
         </View>
       </ScrollView>
     </View>

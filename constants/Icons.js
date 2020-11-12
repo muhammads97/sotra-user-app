@@ -34,6 +34,9 @@ const Icons = {
   expand: require("../assets/icons/expand.png"),
   collapse: require("../assets/icons/collapse.png"),
   cleanIron: require("../assets/icons/cleanIron.png"),
+  loading: require("../assets/icons/loading.png"),
+  share: require("../assets/icons/share.png"),
+  messenger: require("../assets/icons/messenger.png"),
 };
 
 export default Icons;

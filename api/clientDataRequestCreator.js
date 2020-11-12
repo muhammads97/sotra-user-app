@@ -1,5 +1,5 @@
 const root = "https://sotra-app.com/";
-const api_version = "api/v1/";
+const api_version = "api/v2/";
 const base = root + api_version;
 
 export function updateNameRequest(token, name) {
@@ -20,6 +20,39 @@ export function updateNameRequest(token, name) {
   };
 }
 
+export function addReferralRequest(token, code) {
+  return {
+    url: `${base}clients/referrals`,
+    type: "POST",
+    options: {
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        "user-type": "client",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    data: {
+      referral_code: code,
+    },
+  };
+}
+
+export function updateUserDataRequest(token, data) {
+  return {
+    url: `${base}client`,
+    type: "PATCH",
+    options: {
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        "user-type": "client",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    data,
+  };
+}
 export function updateCallBeforeDeliveryRequest(token, callBeforeDelivery) {
   return {
     url: `${base}client`,
@@ -126,6 +159,21 @@ export function addAddressRequest(token, address) {
 export function getPricesRequest(token) {
   return {
     url: `${base}items`,
+    type: "GET",
+    options: {
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        "user-type": "client",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  };
+}
+
+export function getConfig(token, key) {
+  return {
+    url: `${base}settings?name=${key}`,
     type: "GET",
     options: {
       headers: {

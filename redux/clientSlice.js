@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { call } from "../api/apiCall";
 import * as SecureStore from "expo-secure-store";
-
+import * as Localization from "expo-localization";
+import { Updates } from "expo";
+import Translations from "../constants/Translations";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { loginRequest, verificationRequest } from "../api/loginRequestCreators";
@@ -12,7 +14,12 @@ import {
   getAddressesRequest,
   addAddressRequest,
   deleteAddressRequest,
+  updateUserDataRequest,
+  addReferralRequest,
+  getPricesRequest,
+  getConfig,
 } from "../api/clientDataRequestCreator";
+import { I18nManager } from "react-native";
 
 const initialState = {
   loading: true,
@@ -20,13 +27,25 @@ const initialState = {
   loggedIn: false,
   name: "",
   phone: "",
+  email: "",
+  birthDate: "",
+  gender: "",
   call_before_delivery: false,
+  referral_code: "",
   status: "idle",
   error: null,
   token: "000",
   cached: false,
   addresses: [],
+  addressesCached: false,
   balance: 0,
+  newUser: false,
+  referralStatus: "idle",
+  items: [],
+  itemsCached: false,
+  language: "",
+  rtl: false,
+  config: {},
 };
 
 export const initialization = createAsyncThunk(
@@ -35,6 +54,16 @@ export const initialization = createAsyncThunk(
     await SplashScreen.preventAutoHideAsync();
     await loadAssets();
     let token = await SecureStore.getItemAsync("token");
+    let language = await SecureStore.getItemAsync("language");
+    if (language == null) {
+      language = Localization.locale;
+    }
+    Translations.locale = language;
+    if (language == "ar") {
+      I18nManager.forceRTL(true);
+    } else {
+      I18nManager.forceRTL(false);
+    }
     if (token) {
       try {
         const response = await call(getClientRequest(token));
@@ -42,6 +71,7 @@ export const initialization = createAsyncThunk(
           client: response.data.client,
           loggedIn: true,
           token: token,
+          language,
         };
       } catch (error) {
         return {
@@ -58,25 +88,21 @@ export const initialization = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk(
-  "client/login",
-  async ({ phone, name }) => {
-    try {
-      const response = await call(loginRequest(phone));
-      return {
-        sent: true,
-        phone: phone,
-        name: name,
-      };
-    } catch (error) {
-      return {
-        sent: false,
-        error: error.response.data.message,
-        phone: phone,
-      };
-    }
+export const login = createAsyncThunk("client/login", async ({ phone }) => {
+  try {
+    const response = await call(loginRequest(phone));
+    return {
+      sent: true,
+      phone: phone,
+    };
+  } catch (error) {
+    return {
+      sent: false,
+      error: error.response.data.message,
+      phone: phone,
+    };
   }
-);
+});
 
 export const verify = createAsyncThunk(
   "client/verify",
@@ -84,12 +110,15 @@ export const verify = createAsyncThunk(
     try {
       const response = await call(verificationRequest(phone, code));
       await SecureStore.setItemAsync("token", response.data.auth_token);
+      console.log(response.data);
       return {
         loggedIn: true,
         phone: phone,
         token: response.data.auth_token,
+        newUser: response.data.new_client,
       };
     } catch (error) {
+      console.log(error.response.data);
       return {
         loggedIn: false,
         error: error.response.data.message,
@@ -98,7 +127,25 @@ export const verify = createAsyncThunk(
     }
   }
 );
-
+export const loadConfig = createAsyncThunk(
+  "clinet/loadConfig",
+  async ({ key }, { getState }) => {
+    let token = getState().client.token;
+    try {
+      const response = await call(getConfig(token, key));
+      return {
+        success: true,
+        value: response.data.value,
+        key,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response.data.message,
+      };
+    }
+  }
+);
 export const loadClient = createAsyncThunk(
   "client/loadClient",
   async (data, { getState }) => {
@@ -126,10 +173,10 @@ export const loadClient = createAsyncThunk(
 
 export const setName = createAsyncThunk(
   "client/setName",
-  async ({ name }, { getState }) => {
+  ({ name }, { getState }) => {
     let token = getState().client.token;
     try {
-      const response = await call(updateNameRequest(token, name));
+      call(updateNameRequest(token, name));
       return {
         success: true,
         name: name,
@@ -145,12 +192,10 @@ export const setName = createAsyncThunk(
 
 export const setCallBeforeDelivery = createAsyncThunk(
   "client/setCallBeforeDelivery",
-  async ({ value }, { getState }) => {
+  ({ value }, { getState }) => {
     let token = getState().client.token;
     try {
-      const response = await call(
-        updateCallBeforeDeliveryRequest(token, value)
-      );
+      call(updateCallBeforeDeliveryRequest(token, value));
       return {
         success: true,
         value: value,
@@ -194,6 +239,7 @@ export const addAddress = createAsyncThunk(
         address: response.data.address,
       };
     } catch (error) {
+      console.log(error.response.data);
       return {
         success: false,
         error: error.response.data.message,
@@ -222,6 +268,95 @@ export const deleteAddress = createAsyncThunk(
   }
 );
 
+export const updateUserData = createAsyncThunk(
+  "client/updateUserData",
+  async ({ userData }, { getState }) => {
+    const token = getState().client.token;
+    let data = {};
+    if (userData.name != null && userData.name != "") {
+      data["name"] = userData.name;
+    }
+    if (userData.email != null && userData.email != "") {
+      data["email"] = userData.email;
+    }
+    if (userData.gender != null && userData.gender != "") {
+      data["gender"] = userData.gender;
+    }
+    if (userData.birthDate != null && userData.birthDate != "") {
+      data["birth_date"] = userData.birthDate;
+    }
+    console.log(data);
+    try {
+      const response = await call(updateUserDataRequest(token, data));
+      return {
+        success: true,
+        user: response.data.client,
+      };
+    } catch (error) {
+      console.log(error.response);
+      return {
+        success: false,
+        error: error.response.data.message,
+      };
+    }
+  }
+);
+
+export const addReferralCode = createAsyncThunk(
+  "client/addReferralCode",
+  async ({ referral }, { getState }) => {
+    const token = getState().client.token;
+    try {
+      await call(addReferralRequest(token, referral));
+      return {
+        success: true,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response.data.message,
+      };
+    }
+  }
+);
+
+export const loadPrices = createAsyncThunk(
+  "client/loadPrices",
+  async (data, { getState }) => {
+    const token = getState().client.token;
+    try {
+      const response = await call(getPricesRequest(token));
+      return {
+        success: true,
+        items: response.data.items,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response.data.message,
+      };
+    }
+  }
+);
+
+export const setLanguage = createAsyncThunk(
+  "client/setLanguage",
+  ({ language }, { getState }) => {
+    SecureStore.setItemAsync("language", language);
+    Translations.locale = language;
+    if (language == "ar") {
+      I18nManager.forceRTL(true);
+      Updates.reload();
+    } else {
+      I18nManager.forceRTL(false);
+      Updates.reload();
+    }
+    return {
+      language,
+    };
+  }
+);
+
 const clientSlice = createSlice({
   name: "client",
   initialState,
@@ -246,8 +381,45 @@ const clientSlice = createSlice({
         };
       },
     },
+    setAddressesCached: {
+      reducer(state, action) {
+        state.addressesCached = action.payload.cached;
+      },
+      prepare(cached) {
+        return {
+          payload: {
+            cached,
+          },
+        };
+      },
+    },
+    makeOldUser: {
+      reducer(state, action) {
+        state.newUser = false;
+      },
+    },
+    setItemsCached: {
+      reducer(state, action) {
+        state.itemsCached = action.payload.cached;
+      },
+      prepare(cached) {
+        return {
+          payload: {
+            cached,
+          },
+        };
+      },
+    },
   },
   extraReducers: {
+    [setLanguage.fulfilled]: (state, action) => {
+      state.language = action.payload.language;
+      if (state.language == "ar") {
+        state.rtl = true;
+      } else {
+        state.rtl = false;
+      }
+    },
     [initialization.pending]: (state, action) => {
       state.status = "loading";
     },
@@ -257,7 +429,18 @@ const clientSlice = createSlice({
         state.name = action.payload.client.name;
         state.phone = action.payload.client.phone;
         state.call_before_delivery = action.payload.client.call_before_delivery;
+        state.balance = action.payload.client.wallet_balance;
+        state.email = action.payload.client.email;
+        state.birthDate = action.payload.client.birth_date;
+        state.gender = action.payload.client.gender;
         state.token = action.payload.token;
+        state.referral_code = action.payload.client.referral_code;
+        state.language = action.payload.language;
+        if (state.language == "ar") {
+          state.rtl = true;
+        } else {
+          state.rtl = false;
+        }
         state.loggedIn = true;
       } else {
         state.error = action.payload.error;
@@ -274,7 +457,6 @@ const clientSlice = createSlice({
     [login.fulfilled]: (state, action) => {
       if (action.payload.sent) {
         state.phone = action.payload.phone;
-        state.name = action.payload.name;
         state.loggingIn = true;
         state.loggingInStatus = "succeeded";
       } else {
@@ -295,6 +477,7 @@ const clientSlice = createSlice({
         state.status = "succeeded";
         state.phone = action.payload.phone;
         state.loggedIn = true;
+        state.newUser = action.payload.newUser;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
@@ -302,6 +485,21 @@ const clientSlice = createSlice({
     },
     [verify.rejected]: (state, action) => {
       state.status = "failed";
+      state.error = action.error.message;
+    },
+    [addReferralCode.pending]: (state, action) => {
+      state.referralStatus = "loading";
+    },
+    [addReferralCode.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.referralStatus = "succeeded";
+      } else {
+        state.referralStatus = "failed";
+        state.error = action.payload.error;
+      }
+    },
+    [addReferralCode.rejected]: (state, action) => {
+      state.referralStatus = "failed";
       state.error = action.error.message;
     },
     [loadClient.pending]: (state, action) => {
@@ -313,6 +511,11 @@ const clientSlice = createSlice({
         state.name = action.payload.client.name;
         state.phone = action.payload.client.phone;
         state.call_before_delivery = action.payload.client.call_before_delivery;
+        state.balance = action.payload.client.wallet_balance;
+        state.email = action.payload.client.email;
+        state.birthDate = action.payload.client.birth_date;
+        state.gender = action.payload.client.gender;
+        state.referral_code = action.payload.client.referral_code;
         state.loggedIn = true;
       } else {
         state.loggedIn = false;
@@ -352,6 +555,25 @@ const clientSlice = createSlice({
       }
     },
     [setName.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
+    [updateUserData.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [updateUserData.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.status = "succeeded";
+        state.name = action.payload.user.name;
+        state.email = action.payload.user.email;
+        state.gender = action.payload.user.gender;
+        state.birthDate = action.payload.user.birth_date;
+      } else {
+        state.status = "failed";
+        state.error = action.payload.error;
+      }
+    },
+    [updateUserData.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     },
@@ -403,11 +625,39 @@ const clientSlice = createSlice({
       state.status = "failed";
       state.error = action.error.message;
     },
+    [loadPrices.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [loadPrices.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.status = "succeeded";
+        state.items = action.payload.items;
+      } else {
+        state.status = " failed";
+        state.error = action.payload.error;
+      }
+    },
+    [loadPrices.rejected]: (state, action) => {
+      state.status = " failed";
+      state.error = action.error.message;
+    },
+    [loadConfig.fulfilled]: (state, action) => {
+      if (action.payload.success) {
+        state.status = "succeede";
+        state.config[action.payload.key] = action.payload.value;
+      }
+    },
   },
 });
 
 export default clientSlice.reducer;
-export const { resetRequestStatus, setCached } = clientSlice.actions;
+export const {
+  resetRequestStatus,
+  setCached,
+  setAddressesCached,
+  makeOldUser,
+  setItemsCached,
+} = clientSlice.actions;
 
 const loadAssets = async () => {
   await Font.loadAsync({

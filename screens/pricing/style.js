@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     width: 0.0835 * screenWidth,
     height: 0.087193 * screenWidth,
     position: "absolute",
-    right: 0.032 * screenWidth,
   },
   card: {
     backgroundColor: "#fff",
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
   clean: {
     width: 0.0652 * screenWidth,
     height: 0.667378 * 0.0652 * screenWidth,
-    flex: 0.32,
+    flex: 0.45,
     marginRight: 6,
   },
   separator: {
@@ -101,7 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 0.02 * screenHeight,
     flex: 0.32,
     // textAlign: "center",
-    marginLeft: 43,
+    marginLeft: 20,
   },
   priceClean: {
     color: Colors.back,

@@ -59,6 +59,6 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
     fontSize: 0.0225 * screenHeight,
     color: "#fff",
-    marginLeft: "6.5%",
+    margin: "6.5%",
   },
 });

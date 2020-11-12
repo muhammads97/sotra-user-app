@@ -7,18 +7,28 @@ import LoginScreen from "./login/LoginScreen";
 import VerificationScreen from "./verification/VerificationScreen";
 import BottomTabNavigator from "../navigation/BottomTabNavigator";
 import OrderConfirmationScreen from "./orderConfirmation/OrderConfirmationScreen";
+import AddAddressScreen from "./addAddress/AddAddressScreen";
+import SelectLocationScreen from "./selectLocation/SelectLocationScreen";
+import RegistrationScreen from "./registration/RegistrationScreen";
+import Translations from "../constants/Translations";
 
 const Stack = createStackNavigator();
 
 export default function Root() {
   const loggedIn = useSelector((state) => state.client.loggedIn);
+  const newUser = useSelector((state) => state.client.newUser);
   const loading = useSelector((state) => state.client.loading);
   const error = useSelector((state) => state.client.error);
   const status = useSelector((state) => state.client.status);
+
   if (loading) {
     return null;
   }
+  // return <RegistrationScreen />;
   if (loggedIn) {
+    if (newUser) {
+      return <RegistrationScreen />;
+    }
     return (
       <NavigationContainer>
         <Stack.Navigator
@@ -27,14 +37,22 @@ export default function Root() {
           }}
           mode={"modal"}
         >
+          {/* <Stack.Screen name="Registration" component={RegistrationScreen} /> */}
+
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BottomTab" component={BottomTabNavigator} />
           <Stack.Screen
             name="OrderConfirmation"
             component={OrderConfirmationScreen}
+            initialParams={{
+              backText: Translations.t("homePage"),
+            }}
           />
-          {/* <Stack.Screen name="Map" component={Map} /> */}
-          {/* <Stack.Screen name="Archive" component={Archived} /> */}
+          <Stack.Screen name="AddAddress" component={AddAddressScreen} />
+          <Stack.Screen
+            name="SelectLocation"
+            component={SelectLocationScreen}
+          />
           {/* <Stack.Screen name="Stat" component={StatisticsScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>

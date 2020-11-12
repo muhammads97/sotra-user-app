@@ -9,6 +9,7 @@ import {
   getDeliveringRequest,
   getOrderItemsRequest,
   rateOrderRequest,
+  getArchivedRequest,
 } from "../api/ordersRequestCreator";
 
 const initialState = {
@@ -17,7 +18,9 @@ const initialState = {
   serving: [],
   delivering: [],
   archived: [],
+  archivedPage: 0,
   status: "idle",
+  ordering: "idle",
   error: null,
   waitingCached: false,
   pickingCached: false,
@@ -28,11 +31,21 @@ const initialState = {
 
 export const placeOrder = createAsyncThunk(
   "orders/placeOrder",
-  async ({ address_index }, { getState }) => {
+  async (data, { getState }) => {
     const token = getState().client.token;
-    const address = getState().client.addresses[address_index];
+    const address = getState().client.addresses[data.address_index];
     try {
-      const response = await call(placeOrderRequest(token, address.id));
+      const response = await call(
+        placeOrderRequest(
+          token,
+          address.id,
+          data.promo,
+          data.wallet,
+          data.time_slot.id,
+          data.hasWeddingDress
+        )
+      );
+      console.log(response.data);
       return {
         order: response.data,
         success: true,
@@ -47,12 +60,12 @@ export const placeOrder = createAsyncThunk(
 );
 
 export const cancelOrder = createAsyncThunk(
-  "orders/placeOrder",
+  "orders/cancelOrder",
   async ({ index }, { getState }) => {
     const token = getState().client.token;
     try {
       const response = await call(
-        cancelPickupRequest(token, getState().orders.picking[index].id)
+        cancelPickupRequest(token, getState().orders.waiting[index].id)
       );
       return {
         success: true,
@@ -148,9 +161,12 @@ export const loadArchived = createAsyncThunk(
   async (data, { getState }) => {
     const token = getState().client.token;
     try {
-      const response = await call(getArchivedRequest(token));
+      const response = await call(
+        getArchivedRequest(token, data.page, data.perPage)
+      );
       return {
         orders: response.data,
+        page: data.page,
         success: true,
       };
     } catch (error) {
@@ -163,7 +179,7 @@ export const loadArchived = createAsyncThunk(
 );
 
 export const loadOrderItems = createAsyncThunk(
-  "orders/loadArchived",
+  "orders/loadOrderItems",
   async ({ index, status }, { getState }) => {
     const token = getState().client.token;
     const order = getState().orders[status][index];
@@ -185,7 +201,7 @@ export const loadOrderItems = createAsyncThunk(
 );
 
 export const rateOrder = createAsyncThunk(
-  "orders/loadArchived",
+  "orders/rateOrder",
   async ({ index, rating }, { getState }) => {
     const token = getState().client.token;
     const order = getState().orders.archived[index];
@@ -210,9 +226,10 @@ const ordersSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
-    resetRequestStatus: {
+    resetRequestStatusOrders: {
       reducer(state, action) {
         state.status = "idle";
+        state.ordering = "idle";
         state.error = null;
       },
     },
@@ -229,7 +246,7 @@ const ordersSlice = createSlice({
             state.servingCached = action.payload.cached;
             break;
           case "delivering":
-            state.delivering = action.payload.cached;
+            state.deliveringCached = action.payload.cached;
             break;
           case "archived":
             state.archivedCached = action.payload.cached;
@@ -247,22 +264,37 @@ const ordersSlice = createSlice({
         };
       },
     },
+    emptyArchived: {
+      reducer(state, action) {
+        let archived = [];
+        state.archived.forEach((o, i) => {
+          if (i >= 5) return;
+          archived.push(o);
+        });
+        state.archived = archived;
+        state.archivedPage = 0;
+      },
+    },
   },
   extraReducers: {
     [placeOrder.pending]: (state, action) => {
+      state.ordering = "ordering";
       state.status = "loading";
     },
     [placeOrder.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
+        state.ordering = "placed";
         state.waiting.push(action.payload.order);
       } else {
         state.status = "failed";
+        state.ordering = "failed";
         state.error = action.payload.error;
       }
     },
     [placeOrder.rejected]: (state, action) => {
       state.status = "failed";
+      state.ordering = "failed";
       state.error = action.error.message;
     },
     [cancelOrder.pending]: (state, action) => {
@@ -288,6 +320,7 @@ const ordersSlice = createSlice({
       if (action.payload.success) {
         state.status = "succeeded";
         state.waiting = action.payload.orders;
+        state.waitingCached = true;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
@@ -304,6 +337,7 @@ const ordersSlice = createSlice({
       if (action.payload.success) {
         state.status = "succeeded";
         state.picking = action.payload.orders;
+        state.pickingCached = true;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
@@ -320,6 +354,10 @@ const ordersSlice = createSlice({
       if (action.payload.success) {
         state.status = "succeeded";
         state.serving = action.payload.orders;
+        for (let i = 0; i < state.serving.length; i++) {
+          state.serving[i].items = [];
+        }
+        state.servingCached = true;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
@@ -336,6 +374,10 @@ const ordersSlice = createSlice({
       if (action.payload.success) {
         state.status = "succeeded";
         state.delivering = action.payload.orders;
+        for (let i = 0; i < state.delivering.length; i++) {
+          state.delivering[i].items = [];
+        }
+        state.deliveringCached = true;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
@@ -351,7 +393,15 @@ const ordersSlice = createSlice({
     [loadArchived.fulfilled]: (state, action) => {
       if (action.payload.success) {
         state.status = "succeeded";
-        state.archived = action.payload.orders;
+        let orders = action.payload.orders;
+        for (let i = 0; i < orders.length; i++) {
+          orders[i].items = [];
+        }
+        orders.forEach((o) => {
+          state.archived.push(o);
+        });
+        state.archivedPage = action.payload.page;
+        state.archivedCached = true;
       } else {
         state.status = "failed";
         state.error = action.payload.error;
@@ -398,4 +448,8 @@ const ordersSlice = createSlice({
 });
 
 export default ordersSlice.reducer;
-export const { resetRequestStatus, setCached } = ordersSlice.actions;
+export const {
+  resetRequestStatusOrders,
+  setCached,
+  emptyArchived,
+} = ordersSlice.actions;

@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, Image, Text, StatusBar } from "react-native";
 import Icons from "../../constants/Icons";
 import RoundEdgeButton from "../../components/button/RoundEdge";
+import Translations from "../../constants/Translations";
 import styles from "./style";
 import ButtonsSection from "./ButtonsSection";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +13,12 @@ export default function HomeScreen(props) {
   const name = useSelector((state) => state.client.name);
   const status = useSelector((state) => state.client.status);
   const error = useSelector((state) => state.client.error);
+  const direction = useSelector((state) => state.client.direction);
+  const textRtl = direction == "rtl" && {
+    textAlign: "right",
+    writingDirection: "rtl",
+  };
+  const viewRtl = direction == "rtl" && { flexDirection: "row-reverse" };
 
   if (status == "failed") {
     console.log("home screen:", error);
@@ -26,34 +33,42 @@ export default function HomeScreen(props) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <StatusBar backgroundColor={"#fff"} barStyle={"dark-content"} />
       <View style={[styles.subContainer]}>
-        <View style={styles.welcome}>
-          <Text style={styles.hello}>Hello,</Text>
-          <Text style={styles.username}>{name}</Text>
+        <View style={[styles.welcome]}>
+          <Text style={[styles.hello]}>
+            {Translations.t("hello")}
+            {Translations.t("comma")}
+          </Text>
+          <Text style={[styles.username]}>{name}</Text>
         </View>
       </View>
       <View style={[styles.subContainer]}>
         <View style={styles.message}>
           <View style={styles.messageText}>
-            <Text style={styles.orderNowText}>Order now,</Text>
+            <Text style={styles.orderNowText}>
+              {Translations.t("introMessage1")}
+            </Text>
             <Text style={[styles.orderNowText, { letterSpacing: -0.5 }]}>
-              we will pickup your orders
+              {Translations.t("introMessage2")}
             </Text>
             <Text
               style={[styles.orderNowText, { fontFamily: "poppins-semi-bold" }]}
             >
-              everyday from 7 to 10 PM
+              {Translations.t("introMessage3")}
             </Text>
           </View>
           <Image
             style={styles.hanger}
             source={Icons.hanger}
-            resizeMode="contain"
+            resizeMode={"contain"}
           />
         </View>
-        <RoundEdgeButton text={"Order Now"} onPress={() => orderNow()} />
+        <RoundEdgeButton
+          text={Translations.t("orderNow")}
+          onPress={() => orderNow()}
+        />
         <ButtonsSection nav={props.navigation} />
       </View>
     </View>
