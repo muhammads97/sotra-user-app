@@ -14,12 +14,13 @@ import Icons from "../../constants/Icons";
 import Colors from "../../constants/Colors";
 import trans from "../../constants/Translations";
 import Header from "../../components/header/Header";
+import { loadConfig } from "../../redux/clientSlice";
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function HelpScreen(props) {
   const dispatch = useDispatch();
   const rtl = useSelector((state) => state.client.rtl);
-  const supportLine = "+201205147358";
+  const config = useSelector((state) => state.client.config);
   const rootNav = props.route.params.rootNav;
   const [headerElevation, setHeaderElevation] = React.useState(0);
   const backText = trans.t("homePage");
@@ -33,8 +34,14 @@ export default function HelpScreen(props) {
     }
   };
 
+  React.useEffect(() => {
+    if (config.support_line == null) {
+      dispatch(loadConfig({ key: "support_line" }));
+    }
+  }, []);
+
   const callSupport = () => {
-    Linking.openURL(`tel:${supportLine}`);
+    Linking.openURL(`tel:${config.support_line}`);
   };
 
   const msngerChat = () => {
@@ -43,7 +50,6 @@ export default function HelpScreen(props) {
         if (!supported) {
           console.log("Can't handle url: " + url);
         } else {
-          //   console.log("supported");
           Linking.openURL("fb-messenger://user-thread/" + "113005707203726");
         }
       })

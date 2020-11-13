@@ -1,15 +1,14 @@
 import * as React from "react";
 import {
   View,
-  StyleSheet,
-  Dimensions,
   StatusBar,
   TouchableOpacity,
   Text,
   Alert,
-  ToastAndroid,
+  I18nManager,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import trans from "../../constants/Translations";
 
 import { OTP4DigitsInput } from "../../components/OTPInput";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,25 +34,19 @@ export default function VerificationScreen(props) {
   if (status == "failed") {
     switch (error) {
       case "#E014":
-        ToastAndroid.show("Maximum attempts exceeded", ToastAndroid.LONG);
+        Alert.alert(trans.t("maximumAttempts"), trans.t("maxAtmpts"));
         break;
       case "#E017":
-        ToastAndroid.show(
-          "This number is already registered as service.",
-          ToastAndroid.LONG
-        );
+        Alert.alert(trans.t("error"), trans.t("alreadyDelivery"));
         break;
       case "#E012":
-        ToastAndroid.show("Please login again.", ToastAndroid.LONG);
+        Alert.alert(trans.t("error"), trans.t("loginAgain"));
         break;
       case "#E013":
-        ToastAndroid.show(
-          "Wrong verification code, try again.",
-          ToastAndroid.LONG
-        );
+        Alert.alert(trans.t("error"), trans.t("wrongVCode"));
         break;
       default:
-        ToastAndroid.show("Error", ToastAndroid.LONG);
+        Alert.alert(trans.t("error"), trans.t("unknownError"));
         break;
     }
     dispatch(resetRequestStatus());
@@ -73,7 +66,7 @@ export default function VerificationScreen(props) {
     if (isValidVerificationCode(code)) {
       dispatch(verify({ phone, code }));
     } else {
-      ToastAndroid.show("Please enter a valid code", ToastAndroid.LONG);
+      Alert.alert(trans.t("error"), trans.t("enterCorrectCode"));
     }
     setDisabled(false);
   };
@@ -113,14 +106,16 @@ export default function VerificationScreen(props) {
       >
         <View style={styles.verify}>
           <View style={styles.box}>
-            <Text style={styles.verificationText}>Verification</Text>
+            <Text style={styles.verificationText}>
+              {trans.t("verification")}
+            </Text>
             <View style={styles.vertical}>
               <Text style={styles.mobileNumber}>{phone}</Text>
               <TouchableOpacity
                 onPress={() => props.navigation.goBack()}
                 activeOpacity={0.9}
               >
-                <Text style={styles.wrongNumber}>Wrong number?</Text>
+                <Text style={styles.wrongNumber}>{trans.t("wrongNumber")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -128,8 +123,9 @@ export default function VerificationScreen(props) {
             <OTP4DigitsInput
               onChangeText={(text) => setCode(text)}
               style={styles.input}
+              rtl={I18nManager.isRTL}
             />
-            <Text style={styles.code}>Enter 4 Digits Code</Text>
+            <Text style={styles.code}>{trans.t("enterCode")}</Text>
             <View style={styles.resendBox}>
               <TouchableOpacity
                 onPress={() => resend()}
@@ -142,7 +138,7 @@ export default function VerificationScreen(props) {
                     { opacity: activeResend ? 1 : 0.3 },
                   ]}
                 >
-                  Resend SMS
+                  {trans.t("resendSMS")}
                 </Text>
               </TouchableOpacity>
               <View style={{ flex: 1 }} />
@@ -156,7 +152,7 @@ export default function VerificationScreen(props) {
               activeOpacity={0.9}
               disabled={disabled}
             >
-              <Text style={styles.buttonText}>Submit</Text>
+              <Text style={styles.buttonText}>{trans.t("submit")}</Text>
             </TouchableOpacity>
           </View>
         </View>

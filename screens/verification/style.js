@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#fff",
     marginRight: 8,
+    marginLeft: 8,
   },
   wrongNumber: {
     fontFamily: "poppins-extra-light",
@@ -113,6 +114,7 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-light",
     color: Colors.input,
     marginRight: 3,
+    marginLeft: 3,
     marginBottom: 2,
   },
 });

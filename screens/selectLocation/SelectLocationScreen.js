@@ -1,23 +1,14 @@
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  Image,
-  StatusBar,
-  TouchableOpacity,
-} from "react-native";
+import { View, Dimensions, Image } from "react-native";
 import MapView from "react-native-maps";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import StickyHeader from "../../components/header/StickyHeader";
 import Icons from "../../constants/Icons";
 import styles from "./style";
 import Header from "../../components/header/Header";
 import Colors from "../../constants/Colors";
 import Translations from "../../constants/Translations";
-import CurrentLocation from "../locations/currentLocationButton";
+import CurrentLocation from "../../components/currentLocationButton";
 import RoundEdgeButton from "../../components/button/RoundEdge";
 import { useDispatch, useSelector } from "react-redux";
 import { resetRequestStatus, addAddress } from "../../redux/clientSlice";

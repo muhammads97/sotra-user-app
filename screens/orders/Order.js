@@ -299,8 +299,7 @@ export default function Order(props) {
                       {trans.t("paidFromWallet")}
                     </Text>
                     <Text style={styles.itemPrice}>
-                      -{order.after_promo_price - order.final_cash_required}{" "}
-                      {trans.t("LE")}
+                      -{order.wallet_paid} {trans.t("LE")}
                     </Text>
                   </View>
                   {order.status == "delivering" ? (

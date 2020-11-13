@@ -130,9 +130,8 @@ export const verify = createAsyncThunk(
 export const loadConfig = createAsyncThunk(
   "clinet/loadConfig",
   async ({ key }, { getState }) => {
-    let token = getState().client.token;
     try {
-      const response = await call(getConfig(token, key));
+      const response = await call(getConfig(key));
       return {
         success: true,
         value: response.data.value,
@@ -643,7 +642,7 @@ const clientSlice = createSlice({
     },
     [loadConfig.fulfilled]: (state, action) => {
       if (action.payload.success) {
-        state.status = "succeede";
+        state.status = "succeeded";
         state.config[action.payload.key] = action.payload.value;
       }
     },

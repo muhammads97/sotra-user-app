@@ -11,7 +11,7 @@ import {
 import * as Colors from "../constants/Colors";
 
 export class OTP4DigitsInput extends React.Component {
-  constructor({ style }) {
+  constructor({ style, rtl }) {
     super();
     this.state = {
       autoFocus1: true,
@@ -28,6 +28,7 @@ export class OTP4DigitsInput extends React.Component {
     this.ref3 = React.createRef();
     this.ref4 = React.createRef();
     this.st = style;
+    this.rtl = rtl;
   }
 
   isTextReady() {
@@ -79,7 +80,13 @@ export class OTP4DigitsInput extends React.Component {
   }
   render() {
     return (
-      <View style={[styles.container, this.st]}>
+      <View
+        style={[
+          styles.container,
+          this.st,
+          this.rtl ? { flexDirection: "row-reverse" } : {},
+        ]}
+      >
         <TextInput
           placeholder={"__"}
           style={styles.digitInput}

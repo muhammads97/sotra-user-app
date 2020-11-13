@@ -1,17 +1,18 @@
 import * as React from "react";
 import {
   View,
-  ScrollView,
   Image,
   TextInput,
   TouchableOpacity,
   Text,
   StatusBar,
-  Alert,
   ToastAndroid,
+  Alert,
+  I18nManager,
 } from "react-native";
 import { adjustPhone, isValidPhoneNumber } from "../../helpers/phone";
 import styles from "./style";
+import trans from "../../constants/Translations";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetRequestStatus } from "../../redux/clientSlice";
 import Colors from "../../constants/Colors";
@@ -20,16 +21,15 @@ export default function LoginScreen(props) {
   const dispatch = useDispatch();
   const loggingInStatus = useSelector((state) => state.client.loggingInStatus);
   const error = useSelector((state) => state.client.error);
-  const [phone, setPhone] = React.useState("01234567890");
+  const [phone, setPhone] = React.useState("");
   const [disabled, setDisabled] = React.useState(false);
-
   const onClickLogin = async () => {
     setDisabled(true);
     let pNum = adjustPhone(phone);
     if (isValidPhoneNumber(pNum)) {
       dispatch(login({ phone: pNum }));
     } else {
-      ToastAndroid.show("Please enter a valid number", ToastAndroid.LONG);
+      Alert.alert(trans.t("notValid"), trans.t("validNumberMsg"));
     }
     setDisabled(false);
   };
@@ -39,17 +39,13 @@ export default function LoginScreen(props) {
   } else if (loggingInStatus == "failed") {
     switch (error) {
       case "#E014":
-        ToastAndroid.show("Maximum attempts exceeded", ToastAndroid.LONG);
+        Alert.alert(trans.t("maximumAttempts"), trans.t("maxAtmpts"));
         break;
       case "#E017":
-        ToastAndroid.show(
-          "This number is already registered as a delivery agent.",
-          ToastAndroid.LONG
-        );
+        Alert.alert(trans.t("error"), trans.t("alreadyDelivery"));
         break;
       default:
-        ToastAndroid.show("Error", ToastAndroid.LONG);
-        console.log(error);
+        Alert.alert(trans.t("error"), trans.t("unknownError"));
         break;
     }
     dispatch(resetRequestStatus());
@@ -71,11 +67,17 @@ export default function LoginScreen(props) {
           </View>
           <View style={styles.card}>
             <TextInput
-              style={styles.input2}
-              placeholder={"Mobile Number"}
+              style={[
+                styles.input2,
+                I18nManager.isRTL
+                  ? { writingDirection: "rtl", textAlign: "right" }
+                  : { writingDirection: "ltr" },
+              ]}
+              placeholder={trans.t("mobileNumber")}
               keyboardType={"phone-pad"}
               onChangeText={(text) => setPhone(text)}
               scrollEnabled={false}
+              text
             />
             <TouchableOpacity
               style={styles.loginButton}
@@ -83,7 +85,7 @@ export default function LoginScreen(props) {
               activeOpacity={0.9}
               disabled={disabled}
             >
-              <Text style={styles.buttonText}>Log in</Text>
+              <Text style={styles.buttonText}>{trans.t("login")}</Text>
             </TouchableOpacity>
           </View>
         </View>

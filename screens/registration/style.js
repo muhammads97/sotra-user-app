@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     color: Colors.back,
     alignSelf: "flex-start",
     marginLeft: 36,
+    marginRight: 36,
     marginTop: 20,
   },
   genderSection: {
@@ -56,6 +57,8 @@ const styles = StyleSheet.create({
     fontSize: 0.04 * screenWidth,
     color: Colors.back,
     marginTop: 4,
+    marginRight: 10,
+    // marginLeft: 10,
   },
   link: {
     fontFamily: "poppins-light",
@@ -140,6 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 0.035 * screenWidth,
     fontFamily: "poppins-light",
     marginRight: 10,
+    marginLeft: 10,
   },
   success: {
     color: "green",

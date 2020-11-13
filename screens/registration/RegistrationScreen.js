@@ -4,12 +4,10 @@ import { View, Text, Image, StatusBar, Alert } from "react-native";
 import styles from "./style";
 import FloatingTitleTextInputField from "../../components/inputs/FloatingPlaceholderTextInput";
 import RadioButton from "../../components/RadioButton";
-import {
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import DatePicker from "react-native-datepicker";
 import Colors from "../../constants/Colors";
+import trans from "../../constants/Translations";
 import {
   resetRequestStatus,
   updateUserData,
@@ -31,9 +29,9 @@ export default function RegistrationScreen(props) {
 
   const onPressConfirm = () => {
     if (name == "") {
-      Alert.alert("Empty Name!", "Please Enter Your Name.", [
+      Alert.alert(trans.t("emptyName"), trans.t("pleaseEnterYourName"), [
         {
-          text: "Ok",
+          text: trans.t("ok"),
         },
       ]);
     } else {
@@ -64,17 +62,17 @@ export default function RegistrationScreen(props) {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colors.primary} />
-      <Text style={styles.headerText}>Complete your Registration</Text>
+      <Text style={styles.headerText}>{trans.t("completeReg")}</Text>
       <View style={styles.card}>
         <FloatingTitleTextInputField
-          title={"Name"}
+          title={trans.t("name")}
           onChangeText={(text) => setName(text)}
         />
         <FloatingTitleTextInputField
-          title={"Email Address"}
+          title={trans.t("email")}
           onChangeText={(text) => setEmail(text)}
         />
-        <Text style={styles.sectionTitle}>Gender</Text>
+        <Text style={styles.sectionTitle}>{trans.t("gender")}</Text>
         <View style={styles.genderSection}>
           <TouchableOpacity
             style={styles.genderButton}
@@ -82,7 +80,7 @@ export default function RegistrationScreen(props) {
             onPress={() => setGender("m")}
           >
             <RadioButton selected={gender == "m"} />
-            <Text style={styles.gender}>Male</Text>
+            <Text style={styles.gender}>{trans.t("male")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -91,10 +89,10 @@ export default function RegistrationScreen(props) {
             onPress={() => setGender("f")}
           >
             <RadioButton selected={gender == "f"} />
-            <Text style={styles.gender}>Female</Text>
+            <Text style={styles.gender}>{trans.t("female")}</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.sectionTitle}>Birth Date</Text>
+        <Text style={styles.sectionTitle}>{trans.t("birthdate")}</Text>
         <DatePicker
           showIcon={false}
           androidMode="spinner"
@@ -128,7 +126,7 @@ export default function RegistrationScreen(props) {
             onPress={() => setPrompt(true)}
             style={styles.linkBox}
           >
-            <Text style={styles.link}>Add Referral Code</Text>
+            <Text style={styles.link}>{trans.t("addReferral")}</Text>
           </TouchableOpacity>
         ) : status == "loading" ? (
           <Image
@@ -137,15 +135,15 @@ export default function RegistrationScreen(props) {
             style={styles.loading}
           />
         ) : status == "succeeded" ? (
-          <Text style={styles.success}>Referral Code Added!</Text>
+          <Text style={styles.success}>{trans.t("referralAdded")}</Text>
         ) : (
           <View style={styles.row}>
-            <Text style={styles.failed}>Failed to add referral.</Text>
+            <Text style={styles.failed}>{trans.t("referralFailed")}</Text>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setPrompt(true)}
             >
-              <Text style={styles.link}>Try Again?</Text>
+              <Text style={styles.link}>{trans.t("tryAgain")}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -155,7 +153,7 @@ export default function RegistrationScreen(props) {
           onPress={() => onPressConfirm()}
           activeOpacity={0.9}
         >
-          <Text style={styles.buttonText}>Confirm</Text>
+          <Text style={styles.buttonText}>{trans.t("confirm")}</Text>
         </TouchableOpacity>
       </View>
       {prompt ? (
@@ -163,12 +161,12 @@ export default function RegistrationScreen(props) {
           <View style={styles.dark} onTouchEnd={() => setPrompt(false)} />
           <View style={styles.prompt}>
             <FloatingTitleTextInputField
-              title={"Referral Code"}
+              title={trans.t("referralCode")}
               onChangeText={(text) => setReferral(text)}
             />
             <RoundEdgeButton
               style={{ backgroundColor: Colors.primary }}
-              text={"Add Code"}
+              text={trans.t("addCode")}
               textStyle={{ textAlign: "center" }}
               onPress={() => addReferral()}
             />

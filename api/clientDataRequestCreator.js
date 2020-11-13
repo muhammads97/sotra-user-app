@@ -171,7 +171,7 @@ export function getPricesRequest(token) {
   };
 }
 
-export function getConfig(token, key) {
+export function getConfig(key) {
   return {
     url: `${base}settings?name=${key}`,
     type: "GET",
@@ -180,7 +180,6 @@ export function getConfig(token, key) {
         Accept: "*/*",
         "Content-Type": "application/json",
         "user-type": "client",
-        Authorization: `Bearer ${token}`,
       },
     },
   };

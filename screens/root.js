@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "./home/HomeScreen";
@@ -11,20 +11,52 @@ import AddAddressScreen from "./addAddress/AddAddressScreen";
 import SelectLocationScreen from "./selectLocation/SelectLocationScreen";
 import RegistrationScreen from "./registration/RegistrationScreen";
 import Translations from "../constants/Translations";
+import ForceUpdate from "./ForceUpdate";
+import Constants from "expo-constants";
+import { loadConfig } from "../redux/clientSlice";
 
 const Stack = createStackNavigator();
 
 export default function Root() {
+  const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.client.loggedIn);
   const newUser = useSelector((state) => state.client.newUser);
   const loading = useSelector((state) => state.client.loading);
   const error = useSelector((state) => state.client.error);
   const status = useSelector((state) => state.client.status);
+  const config = useSelector((state) => state.client.config);
 
+  const isAboveMinimumVersion = () => {
+    if (config.min_version == null) return true;
+    let current_version = Constants.manifest.version.split(".");
+    let minimum_version = config.min_version.split(".");
+    if (parseInt(current_version[0]) > parseInt(minimum_version[0])) {
+      return true;
+    } else if (parseInt(current_version[0]) == parseInt(minimum_version[0])) {
+      if (parseInt(current_version[1]) > parseInt(minimum_version[1])) {
+        return true;
+      } else if (parseInt(current_version[1]) == parseInt(minimum_version[1])) {
+        if (parseInt(current_version[2]) >= parseInt(minimum_version[2])) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  React.useEffect(() => {
+    if (config.min_version == null) {
+      dispatch(loadConfig({ key: "min_version" }));
+    }
+  }, []);
   if (loading) {
     return null;
   }
-  // return <RegistrationScreen />;
+
+  if (!isAboveMinimumVersion()) {
+    return <ForceUpdate />;
+  }
+
   if (loggedIn) {
     if (newUser) {
       return <RegistrationScreen />;

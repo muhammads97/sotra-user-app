@@ -32,6 +32,7 @@ import {
   setName,
   deleteAddress,
   setLanguage,
+  loadConfig,
 } from "../../redux/clientSlice";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -48,7 +49,7 @@ export default function ProfileScreen({ navigation, route }) {
   const balance = useSelector((state) => state.client.balance);
   const language = useSelector((state) => state.client.language);
   const rtl = useSelector((state) => state.client.rtl);
-
+  const config = useSelector((state) => state.client.config);
   const rootNav = route.params.rootNav;
   const [addressFont, setAddressFont] = React.useState(0.017 * screenHeight);
   const [headerElevation, setHeaderElevation] = React.useState(0);
@@ -77,24 +78,16 @@ export default function ProfileScreen({ navigation, route }) {
       load();
       dispatch(setAddressesCached(true));
     }
+    if (config.referral_back_amount == null) {
+      dispatch(loadConfig({ key: "referral_back_amount" }));
+    }
+    if (config.referral_out_amount == null) {
+      dispatch(loadConfig({ key: "referral_out_amount" }));
+    }
   }, []);
 
   const toggleCBD = (value) => {
     dispatch(setCallBeforeDelivery({ value }));
-  };
-  const FlatListItemSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: 0.7166 * screenWidth,
-          borderBottomWidth: 1,
-          borderColor: Colors.back,
-          marginBottom: 7.5,
-          marginTop: 7.5,
-        }}
-      />
-    );
   };
 
   const updateName = async (name) => {
@@ -135,7 +128,11 @@ export default function ProfileScreen({ navigation, route }) {
         trans.t("shareReferralMsg1") +
         trans.t("shareReferralMsg2") +
         referralCode +
-        trans.t("shareReferralMsg2"),
+        trans.t("shareReferralMsg3_1") +
+        config.referral_out_amount +
+        trans.t("shareReferralMsg3_2") +
+        config.referral_back_amount +
+        trans.t("shareReferralMsg3_3"),
     });
   };
 
@@ -168,8 +165,6 @@ export default function ProfileScreen({ navigation, route }) {
           {Platform.OS == "ios" ? (
             <Switch
               trackColor={{ false: Colors.track.off, true: Colors.track.on }}
-              // thumbColor={"#fff"}
-              // style={styles.toggle}
               ios_backgroundColor={Colors.track.off}
               value={cbd}
               onValueChange={(value) => toggleCBD(value)}
@@ -233,7 +228,11 @@ export default function ProfileScreen({ navigation, route }) {
           </View>
         </View>
         <Text style={styles.hint} numberOfLines={2}>
-          {trans.t("referralDescription")}
+          {trans.t("referralDescription1") +
+            config.referral_out_amount +
+            trans.t("referralDescription2") +
+            config.referral_back_amount +
+            trans.t("referralDescription3")}
         </Text>
         <View style={[styles.addressesView]}>
           <View style={styles.addressesHeader}>
