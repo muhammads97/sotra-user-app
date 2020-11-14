@@ -6,16 +6,46 @@ import Translations from "../../constants/Translations";
 import styles from "./style";
 import ButtonsSection from "./ButtonsSection";
 import { useDispatch, useSelector } from "react-redux";
-import { resetRequestStatus, loadClient } from "../../redux/clientSlice";
+import {
+  resetRequestStatus,
+  loadClient,
+  setPushToken,
+} from "../../redux/clientSlice";
 
 export default function HomeScreen(props) {
   const dispatch = useDispatch();
   const name = useSelector((state) => state.client.name);
   const status = useSelector((state) => state.client.status);
   const error = useSelector((state) => state.client.error);
+  const notification = useSelector((state) => state.client.notification);
 
   if (status == "failed") {
     console.log("home screen:", error);
+  }
+  if (notification != null) {
+    const go_to = notification.data.go_to;
+    switch (go_to) {
+      case "orders":
+        onPressHandler(1, props.navigation);
+        break;
+      case "pricing":
+        onPressHandler(2, props.navigation);
+        break;
+      case "help":
+        onPressHandler(3, props.navigation);
+        break;
+      case "profile":
+        onPressHandler(4, props.navigation);
+        break;
+      case "order_now":
+        props.navigation.navigate("OrderConfirmation");
+        break;
+      case "add_address":
+        props.navigation.navigate("AddAddress", {
+          backText: Translations.t("homePage"),
+        });
+        break;
+    }
   }
 
   const orderNow = () => {
@@ -24,6 +54,7 @@ export default function HomeScreen(props) {
   React.useEffect(() => {
     dispatch(resetRequestStatus());
     dispatch(loadClient());
+    dispatch(setPushToken());
   }, []);
 
   return (
@@ -68,3 +99,34 @@ export default function HomeScreen(props) {
     </View>
   );
 }
+
+const onPressHandler = (button, navigation) => {
+  switch (button) {
+    case 1:
+      navigation.navigate("BottomTab", {
+        init: "Orders",
+        rootNavigation: navigation,
+      });
+      return;
+    case 2:
+      navigation.navigate("BottomTab", {
+        init: "Pricing",
+        rootNavigation: navigation,
+      });
+      return;
+    case 3:
+      navigation.navigate("BottomTab", {
+        init: "Help",
+        rootNavigation: navigation,
+      });
+      return;
+    case 4:
+      navigation.navigate("BottomTab", {
+        init: "Profile",
+        rootNavigation: navigation,
+      });
+      return;
+    default:
+      return;
+  }
+};

@@ -18,6 +18,7 @@ import {
   resetRequestStatus,
   loadAddresses,
   setAddressesCached,
+  setNotification,
 } from "../../redux/clientSlice";
 import styles from "./style";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -37,6 +38,7 @@ export default function OrderConfirmationScreen(props) {
   const status = useSelector((state) => state.orders.status);
   const error = useSelector((state) => state.orders.error);
   const balance = useSelector((state) => state.client.balance);
+  const notification = useSelector((state) => state.client.notification);
   const rtl = I18nManager.isRTL;
 
   const backText = props.route.params.backText;
@@ -48,6 +50,10 @@ export default function OrderConfirmationScreen(props) {
   const [selector, setSelector] = React.useState(false);
   const [addressIndex, setAddressIndex] = React.useState(0);
   const [hasWeddingDress, setHasWeddingDress] = React.useState(false);
+
+  if (notification) {
+    dispatch(setNotification(null));
+  }
 
   if (orderingStatus == "placed") {
     dispatch(resetRequestStatusOrders());

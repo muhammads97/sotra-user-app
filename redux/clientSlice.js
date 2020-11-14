@@ -6,6 +6,10 @@ import { Updates } from "expo";
 import Translations from "../constants/Translations";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import Constants from "expo-constants";
+import * as Permissions from "expo-permissions";
+import * as Notifications from "expo-notifications";
+
 import { loginRequest, verificationRequest } from "../api/loginRequestCreators";
 import {
   getClientRequest,
@@ -45,6 +49,7 @@ const initialState = {
   itemsCached: false,
   language: "",
   config: {},
+  notification: null,
 };
 
 export const initialization = createAsyncThunk(
@@ -334,19 +339,50 @@ export const loadPrices = createAsyncThunk(
 
 export const setLanguage = createAsyncThunk(
   "client/setLanguage",
-  ({ language }, { getState }) => {
+  async ({ language }, { getState }) => {
     SecureStore.setItemAsync("language", language);
     Translations.locale = language;
     if (language == "ar") {
       I18nManager.forceRTL(true);
-      Updates.reload();
     } else {
       I18nManager.forceRTL(false);
-      Updates.reload();
     }
-    return {
-      language,
-    };
+    try {
+      await call(updateUserDataRequest(token, { lang: language }));
+      Updates.reload();
+      return {
+        success: true,
+        language,
+      };
+    } catch (error) {
+      Updates.reload();
+      return {
+        success: false,
+        error: error.response.data.message,
+      };
+    }
+  }
+);
+
+export const setPushToken = createAsyncThunk(
+  "client/setPushToken",
+  async (data, { getState }) => {
+    const token = getState().client.token;
+    const pushToken = await registerForPushNotificationsAsync();
+    const lang = getState().client.language;
+    try {
+      const response = await call(
+        updateUserDataRequest(token, { notification_token: pushToken, lang })
+      );
+      return {
+        success: true,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response.data.message,
+      };
+    }
   }
 );
 
@@ -399,6 +435,18 @@ const clientSlice = createSlice({
         return {
           payload: {
             cached,
+          },
+        };
+      },
+    },
+    setNotification: {
+      reducer(state, action) {
+        state.notification = action.payload.notification;
+      },
+      prepare(notification) {
+        return {
+          payload: {
+            notification,
           },
         };
       },
@@ -630,6 +678,16 @@ const clientSlice = createSlice({
         state.config[action.payload.key] = action.payload.value;
       }
     },
+    [setPushToken.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [setPushToken.fulfilled]: (state, action) => {
+      state.status = "succeeded";
+    },
+    [setPushToken.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
   },
 });
 
@@ -640,6 +698,7 @@ export const {
   setAddressesCached,
   makeOldUser,
   setItemsCached,
+  setNotification,
 } = clientSlice.actions;
 
 const loadAssets = async () => {
@@ -664,3 +723,33 @@ const loadAssets = async () => {
     "poppins-thin-italic": require("../assets/fonts/poppins/Poppins-ThinItalic.ttf"),
   });
 };
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+  } else {
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}

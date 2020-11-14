@@ -26,6 +26,7 @@ import {
   emptyArchived,
   setCached,
 } from "../../redux/ordersSlice";
+import { setNotification } from "../../redux/clientSlice";
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function OrdersScreen(props) {
@@ -37,6 +38,7 @@ export default function OrdersScreen(props) {
   const serving = useSelector((state) => state.orders.serving);
   const servingCached = useSelector((state) => state.orders.servingCached);
   const delivering = useSelector((state) => state.orders.delivering);
+  const notification = useSelector((state) => state.client.notification);
   const rtl = I18nManager.isRTL;
   const deliveringCached = useSelector(
     (state) => state.orders.deliveringCached
@@ -66,6 +68,10 @@ export default function OrdersScreen(props) {
     if (len == 1) return 1;
     if (len > 1) return 2;
   };
+
+  if (notification) {
+    dispatch(setNotification(null));
+  }
 
   const loadOlderOrders = (reset) => {
     let p = page;

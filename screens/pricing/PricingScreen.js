@@ -24,6 +24,7 @@ export default function PricingScreen({ navigation, route }) {
   const headerText = trans.t("pricingList");
   const items = useSelector((state) => state.client.items);
   const cached = useSelector((state) => state.client.itemsCached);
+  const notification = useSelector((state) => state.client.notification);
   const rtl = I18nManager.isRTL;
   const lang = useSelector((state) => state.client.language);
   const [headerShadow, setHeaderShadow] = React.useState({});
@@ -32,6 +33,10 @@ export default function PricingScreen({ navigation, route }) {
   const load = async () => {
     dispatch(loadPrices());
   };
+
+  if (notification) {
+    dispatch(setNotification(null));
+  }
 
   const renderRow = (data, index) => {
     const name = lang == "ar" ? data.name_ar : data.name;

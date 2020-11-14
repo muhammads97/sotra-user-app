@@ -35,6 +35,7 @@ import {
   deleteAddress,
   setLanguage,
   loadConfig,
+  setNotification,
 } from "../../redux/clientSlice";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -50,6 +51,7 @@ export default function ProfileScreen({ navigation, route }) {
   const referralCode = useSelector((state) => state.client.referral_code);
   const balance = useSelector((state) => state.client.balance);
   const language = useSelector((state) => state.client.language);
+  const notification = useSelector((state) => state.client.notification);
   const rtl = I18nManager.isRTL;
   const config = useSelector((state) => state.client.config);
   const rootNav = route.params.rootNav;
@@ -57,6 +59,10 @@ export default function ProfileScreen({ navigation, route }) {
   const [headerElevation, setHeaderElevation] = React.useState(0);
   const backText = trans.t("homePage");
   const headerText = trans.t("profileSettings");
+
+  if (notification) {
+    dispatch(setNotification(null));
+  }
 
   const onPressAddAddress = () => {
     rootNav.navigate("AddAddress", {

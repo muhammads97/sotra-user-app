@@ -17,7 +17,7 @@ import Translations from "../../constants/Translations";
 import styles from "./style";
 import RoundEdgeButton from "../../components/button/RoundEdge";
 import { useDispatch, useSelector } from "react-redux";
-import { resetRequestStatus } from "../../redux/clientSlice";
+import { resetRequestStatus, setNotification } from "../../redux/clientSlice";
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function AddAddressScreen(props) {
@@ -31,6 +31,10 @@ export default function AddAddressScreen(props) {
   const [floor, setFloor] = React.useState("");
   const [apartment, setApartment] = React.useState("");
   const [directions, setDirections] = React.useState("");
+  const notification = useSelector((state) => state.client.notification);
+  if (notification) {
+    dispatch(setNotification(null));
+  }
 
   const onPressSave = () => {
     if (street.length == 0) {

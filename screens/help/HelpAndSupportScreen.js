@@ -15,7 +15,7 @@ import Icons from "../../constants/Icons";
 import Colors from "../../constants/Colors";
 import trans from "../../constants/Translations";
 import Header from "../../components/header/Header";
-import { loadConfig } from "../../redux/clientSlice";
+import { loadConfig, setNotification } from "../../redux/clientSlice";
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function HelpScreen(props) {
@@ -26,6 +26,10 @@ export default function HelpScreen(props) {
   const [headerElevation, setHeaderElevation] = React.useState(0);
   const backText = trans.t("homePage");
   const headerText = trans.t("helpAndSupport");
+  const notification = useSelector((state) => state.client.notification);
+  if (notification) {
+    dispatch(setNotification(null));
+  }
 
   const adjustHeaderElevation = (offset) => {
     if (offset.y == 0 && headerElevation != 0) {

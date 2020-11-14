@@ -13,7 +13,9 @@ import RegistrationScreen from "./registration/RegistrationScreen";
 import Translations from "../constants/Translations";
 import ForceUpdate from "./ForceUpdate";
 import Constants from "expo-constants";
-import { loadConfig } from "../redux/clientSlice";
+import { loadConfig, setNotification } from "../redux/clientSlice";
+import { Notifications } from "expo";
+// import * as Notifications from "expo-notifications";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +27,7 @@ export default function Root() {
   const error = useSelector((state) => state.client.error);
   const status = useSelector((state) => state.client.status);
   const config = useSelector((state) => state.client.config);
+  const notificationListener = React.useRef();
 
   const isAboveMinimumVersion = () => {
     if (config.min_version == null) return true;
@@ -48,6 +51,13 @@ export default function Root() {
     if (config.min_version == null) {
       dispatch(loadConfig({ key: "min_version" }));
     }
+    notificationListener.current = Notifications.addListener((response) => {
+      if (response.origin == "selected") dispatch(setNotification(response));
+    });
+
+    return () => {
+      notificationListener.current.remove();
+    };
   }, []);
   if (loading) {
     return null;
