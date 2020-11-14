@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Linking,
   Image,
+  I18nManager,
 } from "react-native";
 import styles from "./style";
 import Icons from "../../constants/Icons";
@@ -19,7 +20,7 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function HelpScreen(props) {
   const dispatch = useDispatch();
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const config = useSelector((state) => state.client.config);
   const rootNav = props.route.params.rootNav;
   const [headerElevation, setHeaderElevation] = React.useState(0);
@@ -68,7 +69,7 @@ export default function HelpScreen(props) {
         text={headerText}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
       />
       <ScrollView
@@ -83,16 +84,55 @@ export default function HelpScreen(props) {
           <Text style={styles.howToUseTitle}>{trans.t("howToUse")}</Text>
           <Text style={styles.underTitle}>{trans.t("steps")}</Text>
           <View style={styles.step}>
-            <Text style={[styles.stepNumber, { paddingLeft: 15 }]}>1</Text>
-            <Text style={styles.stepText}>{trans.t("step1")}</Text>
+            <Text style={[styles.stepNumber, { paddingStart: 15 }]}>1</Text>
+            <Text
+              style={[
+                styles.stepText,
+                I18nManager.isRTL
+                  ? {
+                      writingDirection: "rtl",
+                      marginTop: -20,
+                      width: 0.6 * screenWidth,
+                    }
+                  : null,
+              ]}
+            >
+              {trans.t("step1")}
+            </Text>
           </View>
           <View style={styles.step}>
             <Text style={styles.stepNumber}>2</Text>
-            <Text style={styles.stepText}>{trans.t("step2")}</Text>
+            <Text
+              style={[
+                styles.stepText,
+                I18nManager.isRTL
+                  ? {
+                      writingDirection: "rtl",
+                      marginTop: -20,
+                      width: 0.6 * screenWidth,
+                    }
+                  : null,
+              ]}
+            >
+              {trans.t("step2")}
+            </Text>
           </View>
           <View style={styles.step}>
             <Text style={styles.stepNumber}>3</Text>
-            <Text style={styles.stepText}>{trans.t("step3")}</Text>
+            <Text
+              style={[
+                styles.stepText,
+                I18nManager.isRTL
+                  ? {
+                      writingDirection: "rtl",
+                      marginTop: -20,
+                      width: 0.6 * screenWidth,
+                    }
+                  : null,
+              ]}
+            >
+              {trans.t("step3")}
+            </Text>
           </View>
         </View>
         <View style={styles.supportView}>

@@ -233,7 +233,7 @@ i18n.translations = {
     verification: "تأكيد رقم الموبايل",
     wrongNumber: "الرقم غلط؟",
     enterCode: "دخل الرقم امكون من 4 ارقام",
-    resendSMS: "اعادة ارسال الرقم",
+    resendSMS: "اعادة ارسال الكود",
     submit: "دخول",
 
     emptyName: "عرفنا بنفسك",

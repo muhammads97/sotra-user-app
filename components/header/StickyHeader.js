@@ -7,6 +7,7 @@ import {
   StatusBar,
   Dimensions,
   Image,
+  I18nManager,
 } from "react-native";
 import Icons from "../../constants/Icons";
 import Colors from "../../constants/Colors";
@@ -24,7 +25,7 @@ export default function StickyHeader({
   backText,
   headerComponent,
 }) {
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const back = () => {
     if (backTo == null) nav.goBack();
     else nav.navigate(backTo);

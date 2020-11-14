@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
+  Platform,
 } from "react-native";
 import * as Colors from "../constants/Colors";
 
@@ -58,17 +59,26 @@ export class OTP4DigitsInput extends React.Component {
     }
     if (t == 3) {
       if (text.length == 1) this.ref3.current.focus();
+      else if (text.length == 0 && this.state.d2.length == 1) {
+        this.ref1.current.focus();
+      }
       this.setState({ d2: text }, () => {
         this.props.onChangeText(this.getText());
       });
     }
     if (t == 4) {
       if (text.length == 1) this.ref4.current.focus();
+      else if (text.length == 0 && this.state.d3.length == 1) {
+        this.ref2.current.focus();
+      }
       this.setState({ d3: text }, () => {
         this.props.onChangeText(this.getText());
       });
     }
     if (t == 0) {
+      if (text.length == 0 && this.state.d4.length == 1) {
+        this.ref3.current.focus();
+      }
       this.setState({ d4: text }, () => {
         this.props.onChangeText(this.getText());
       });
@@ -87,50 +97,70 @@ export class OTP4DigitsInput extends React.Component {
           this.rtl ? { flexDirection: "row-reverse" } : {},
         ]}
       >
-        <TextInput
-          placeholder={"__"}
-          style={styles.digitInput}
-          textContentType={"creditCardNumber"}
-          keyboardType={"number-pad"}
-          maxLength={1}
-          autoFocus={this.state.autoFocus1}
-          onChangeText={(text) => this.onTextChanged(2, text)}
-          ref={this.ref1}
-          scrollEnabled={false}
-        />
-        <TextInput
-          placeholder={"__"}
-          style={styles.digitInput}
-          textContentType={"creditCardNumber"}
-          keyboardType={"number-pad"}
-          maxLength={1}
-          autoFocus={this.state.autoFocus2}
-          onChangeText={(text) => this.onTextChanged(3, text)}
-          ref={this.ref2}
-          scrollEnabled={false}
-        />
-        <TextInput
-          placeholder={"__"}
-          style={styles.digitInput}
-          textContentType={"creditCardNumber"}
-          keyboardType={"number-pad"}
-          maxLength={1}
-          autoFocus={this.state.autoFocus3}
-          onChangeText={(text) => this.onTextChanged(4, text)}
-          ref={this.ref3}
-          scrollEnabled={false}
-        />
-        <TextInput
-          placeholder={"__"}
-          style={styles.digitInput}
-          textContentType={"creditCardNumber"}
-          keyboardType={"number-pad"}
-          maxLength={1}
-          autoFocus={this.state.autoFocus4}
-          onChangeText={(text) => this.onTextChanged(0, text)}
-          ref={this.ref4}
-          scrollEnabled={false}
-        />
+        <View style={styles.inputHolder}>
+          <TextInput
+            style={[
+              styles.digitInput,
+              Platform.OS == "android" ? styles.androidInput : null,
+            ]}
+            textContentType={"creditCardNumber"}
+            keyboardType={"number-pad"}
+            maxLength={1}
+            autoFocus={this.state.autoFocus1}
+            onChangeText={(text) => this.onTextChanged(2, text)}
+            ref={this.ref1}
+            scrollEnabled={false}
+          />
+          {this.state.d1.length == 0 ? <View style={styles.dash} /> : null}
+        </View>
+        <View style={styles.inputHolder}>
+          <TextInput
+            style={[
+              styles.digitInput,
+              Platform.OS == "android" ? styles.androidInput : null,
+            ]}
+            textContentType={"creditCardNumber"}
+            keyboardType={"number-pad"}
+            maxLength={1}
+            autoFocus={this.state.autoFocus2}
+            onChangeText={(text) => this.onTextChanged(3, text)}
+            ref={this.ref2}
+            scrollEnabled={false}
+          />
+          {this.state.d2.length == 0 ? <View style={styles.dash} /> : null}
+        </View>
+        <View style={styles.inputHolder}>
+          <TextInput
+            style={[
+              styles.digitInput,
+              Platform.OS == "android" ? styles.androidInput : null,
+            ]}
+            textContentType={"creditCardNumber"}
+            keyboardType={"number-pad"}
+            maxLength={1}
+            autoFocus={this.state.autoFocus3}
+            onChangeText={(text) => this.onTextChanged(4, text)}
+            ref={this.ref3}
+            scrollEnabled={false}
+          />
+          {this.state.d3.length == 0 ? <View style={styles.dash} /> : null}
+        </View>
+        <View style={styles.inputHolder}>
+          <TextInput
+            style={[
+              styles.digitInput,
+              Platform.OS == "android" ? styles.androidInput : null,
+            ]}
+            textContentType={"creditCardNumber"}
+            keyboardType={"number-pad"}
+            maxLength={1}
+            autoFocus={this.state.autoFocus4}
+            onChangeText={(text) => this.onTextChanged(0, text)}
+            ref={this.ref4}
+            scrollEnabled={false}
+          />
+          {this.state.d4.length == 0 ? <View style={styles.dash} /> : null}
+        </View>
       </View>
     );
   }
@@ -151,9 +181,24 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-regular",
     fontSize: 40,
     color: Colors.default.input,
-    letterSpacing: -10,
     textAlign: "center",
-    marginBottom: -10,
     flex: 1,
+    width: "100%",
+  },
+  inputHolder: {
+    flex: 1,
+    alignItems: "center",
+  },
+  dash: {
+    width: 35,
+    height: 0,
+    borderBottomWidth: 3,
+    borderColor: Colors.default.input,
+    opacity: 0.5,
+    position: "absolute",
+    bottom: 10,
+  },
+  androidInput: {
+    marginBottom: -10,
   },
 });

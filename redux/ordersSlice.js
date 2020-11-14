@@ -45,7 +45,6 @@ export const placeOrder = createAsyncThunk(
           data.hasWeddingDress
         )
       );
-      console.log(response.data);
       return {
         order: response.data,
         success: true,

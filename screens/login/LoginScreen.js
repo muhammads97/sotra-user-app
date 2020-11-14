@@ -9,6 +9,9 @@ import {
   ToastAndroid,
   Alert,
   I18nManager,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from "react-native";
 import { adjustPhone, isValidPhoneNumber } from "../../helpers/phone";
 import styles from "./style";
@@ -30,22 +33,42 @@ export default function LoginScreen(props) {
       dispatch(login({ phone: pNum }));
     } else {
       Alert.alert(trans.t("notValid"), trans.t("validNumberMsg"));
+      setDisabled(false);
     }
-    setDisabled(false);
+    // setDisabled(false);
   };
 
   if (loggingInStatus == "succeeded") {
+    setTimeout(() => {
+      setDisabled(false);
+    }, 100);
+
     props.navigation.navigate("Verify");
   } else if (loggingInStatus == "failed") {
     switch (error) {
       case "#E014":
-        Alert.alert(trans.t("maximumAttempts"), trans.t("maxAtmpts"));
+        Alert.alert(trans.t("maximumAttempts"), trans.t("maxAtmpts"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
       case "#E017":
-        Alert.alert(trans.t("error"), trans.t("alreadyDelivery"));
+        Alert.alert(trans.t("error"), trans.t("alreadyDelivery"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
       default:
-        Alert.alert(trans.t("error"), trans.t("unknownError"));
+        Alert.alert(trans.t("error"), trans.t("unknownError"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
     }
     dispatch(resetRequestStatus());
@@ -55,7 +78,11 @@ export default function LoginScreen(props) {
     <View style={styles.container}>
       <StatusBar backgroundColor={Colors.primary} />
       <View style={styles.container}>
-        <View style={styles.login}>
+        <KeyboardAvoidingView
+          style={styles.login}
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={10}
+        >
           <View style={styles.logo}>
             <Image
               source={require("../../assets/images/login-logo.png")}
@@ -88,7 +115,7 @@ export default function LoginScreen(props) {
               <Text style={styles.buttonText}>{trans.t("login")}</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </View>
     </View>
   );

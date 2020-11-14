@@ -9,6 +9,7 @@ import {
   Image,
   Linking,
   Alert,
+  I18nManager,
 } from "react-native";
 import * as Colors from "../../constants/Colors";
 import { makeAddress, formatAddress } from "../../helpers/address";
@@ -34,7 +35,7 @@ export default function Order(props) {
   const orderStatus = props.status;
   const order = useSelector((state) => state.orders[orderStatus][index]);
   const balance = useSelector((state) => state.client.balance);
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const lang = useSelector((state) => state.client.language);
   const [lineHeight, setLineHeight] = React.useState(200);
   const title =
@@ -176,29 +177,13 @@ export default function Order(props) {
           disabled={!order.total_items}
         >
           <View style={styles.OrderHeader}>
-            <Text
-              style={[
-                styles.orderTitle,
-                rtl
-                  ? { marginRight: 0.044 * screenWidth }
-                  : { marginLeft: 0.044 * screenWidth },
-              ]}
-            >
-              {title}
-            </Text>
+            <Text style={[styles.orderTitle]}>{title}</Text>
             {order.status != "waiting" &&
             order.status != "picking" &&
             order.total_items != 0 ? (
               <>
                 {order.promo_applied ? (
-                  <View
-                    style={[
-                      styles.discountedPrice,
-                      rtl
-                        ? { marginLeft: 0.044 * screenWidth }
-                        : { marginRight: 0.044 * screenWidth },
-                    ]}
-                  >
+                  <View style={[styles.discountedPrice]}>
                     <Text style={styles.oldPrice}>
                       {order.total_price} {trans.t("LE")}
                     </Text>
@@ -207,14 +192,7 @@ export default function Order(props) {
                     </Text>
                   </View>
                 ) : (
-                  <Text
-                    style={[
-                      styles.price,
-                      rtl
-                        ? { marginLeft: 0.044 * screenWidth }
-                        : { marginRight: 0.044 * screenWidth },
-                    ]}
-                  >
+                  <Text style={[styles.price]}>
                     {order.total_price} {trans.t("LE")}
                   </Text>
                 )}
@@ -222,28 +200,12 @@ export default function Order(props) {
             ) : null}
           </View>
           {order.status == "waiting" ? (
-            <Text
-              style={[
-                styles.timeSlot,
-                rtl
-                  ? { marginRight: 0.088 * screenWidth }
-                  : { marginLeft: 0.088 * screenWidth },
-              ]}
-            >
+            <Text style={[styles.timeSlot]}>
               {trans.t("pickingAt")}{" "}
               {`${order.time_slot.from} ~ ${order.time_slot.to} ${order.time_slot.time_type}`}
             </Text>
           ) : order.status == "picking" ? (
-            <Text
-              style={[
-                styles.timeSlot,
-                rtl
-                  ? { marginRight: 0.088 * screenWidth }
-                  : { marginLeft: 0.088 * screenWidth },
-              ]}
-            >
-              {trans.t("pickingNow")}
-            </Text>
+            <Text style={[styles.timeSlot]}>{trans.t("pickingNow")}</Text>
           ) : null}
           {expand && order.items.length > 0 ? (
             <View style={styles.separator} />
@@ -257,12 +219,7 @@ export default function Order(props) {
                       <Image
                         source={getItemIcon(item)}
                         resizeMode={"contain"}
-                        style={[
-                          styles.itemIcon,
-                          rtl
-                            ? { marginLeft: 0.027 * screenWidth }
-                            : { marginRight: 0.027 * screenWidth },
-                        ]}
+                        style={[styles.itemIcon]}
                       />
                       <Text style={styles.itemName}>
                         {lang == "ar" ? item.item.name_ar : item.item.name}
@@ -338,12 +295,7 @@ export default function Order(props) {
             <Rate
               onChangeRate={(rate) => onRate(rate)}
               value={order.rating == null ? 0 : order.rating}
-              style={[
-                styles.rate,
-                rtl
-                  ? { marginLeft: 0.03 * screenWidth }
-                  : { marginRight: 0.03 * screenWidth },
-              ]}
+              style={[styles.rate]}
             />
           ) : (
             // <View style={styles.rightButtons}>
@@ -351,14 +303,7 @@ export default function Order(props) {
             <>
               {order.promo_applied &&
               (order.status == "waiting" || order.status == "picking") ? (
-                <View
-                  style={[
-                    styles.discountHolder,
-                    rtl
-                      ? { paddingRight: 0.02 * screenWidth }
-                      : { paddingLeft: 0.02 * screenWidth },
-                  ]}
-                >
+                <View style={[styles.discountHolder]}>
                   <Text style={styles.discountText}>
                     %{order.promo_discount.split("%")[0].split(".")[0]}{" "}
                     {trans.t("discount")}
@@ -366,24 +311,14 @@ export default function Order(props) {
                 </View>
               ) : null}
               {order.status == "delivering" ? (
-                <Text
-                  style={[
-                    styles.balance,
-                    rtl ? { marginLeft: 10 } : { marginRight: 10 },
-                  ]}
-                >
+                <Text style={[styles.balance]}>
                   {trans.t("cashRequired")}: {order.final_cash_required}{" "}
                   {trans.t("LE")}
                 </Text>
               ) : null}
               {cancelBtn ? (
                 <TouchableOpacity
-                  style={[
-                    styles.cancelBtn,
-                    rtl
-                      ? { marginLeft: 0.055 * screenWidth }
-                      : { marginRight: 0.055 * screenWidth },
-                  ]}
+                  style={[styles.cancelBtn]}
                   activeOpacity={0.8}
                   onPress={() => cancel()}
                 >
@@ -487,6 +422,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     justifyContent: "center",
     alignItems: "center",
+    marginEnd: 0.055 * screenWidth,
   },
   cancelText: {
     fontSize: 0.014 * screenHeight,
@@ -496,6 +432,7 @@ const styles = StyleSheet.create({
   rate: {
     width: 0.3 * screenWidth,
     marginTop: 0.03 * screenHeight,
+    marginEnd: 0.03 * screenWidth,
   },
   OrderHeader: {
     flexDirection: "row",
@@ -507,6 +444,7 @@ const styles = StyleSheet.create({
     fontSize: 0.023 * screenHeight,
     color: Colors.default.back,
     marginTop: 0.01875 * screenHeight,
+    marginStart: 0.05 * screenWidth,
   },
   timeSlot: {
     fontFamily: "poppins-light",
@@ -514,17 +452,22 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 0.015 * screenHeight,
     color: Colors.default.back,
+    // marginLeft: 0.088 * screenWidth,
+    // marginRight: 0.088 * screenWidth,
+    marginStart: 0.1 * screenWidth,
   },
   price: {
     fontFamily: "poppins-light",
     fontSize: 0.01875 * screenHeight,
     color: Colors.default.back,
     marginTop: 0.025 * screenHeight,
+    marginEnd: 0.044 * screenWidth,
   },
   balance: {
     fontFamily: "poppins-light",
     fontSize: 0.01875 * screenHeight,
     color: Colors.default.back,
+    marginEnd: 10,
   },
   cash: {
     fontFamily: "poppins-regular",
@@ -562,11 +505,12 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-extra-light",
     fontSize: 0.015625 * screenHeight,
     color: Colors.default.back,
-    width: 0.12 * screenWidth,
+    // width: 0.12 * screenWidth,
   },
   itemIcon: {
     width: 0.04 * screenWidth,
     height: 0.04 * screenWidth,
+    marginEnd: 0.03 * screenWidth,
   },
   itemIconName: {
     flexDirection: "row",
@@ -574,6 +518,8 @@ const styles = StyleSheet.create({
   discountHolder: {
     flexDirection: "row",
     flexGrow: 1,
+    paddingRight: 0.02 * screenWidth,
+    paddingLeft: 0.02 * screenWidth,
   },
   discountText: {
     fontFamily: "poppins-light",
@@ -607,5 +553,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 28,
     flexDirection: "row",
+    marginLeft: 0.044 * screenWidth,
+    marginRight: 0.044 * screenWidth,
   },
 });

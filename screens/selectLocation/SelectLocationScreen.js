@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Dimensions, Image } from "react-native";
+import { View, Dimensions, Image, I18nManager } from "react-native";
 import MapView from "react-native-maps";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
@@ -18,7 +18,7 @@ export default function SelectLocationScreen(props) {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.client.status);
   const error = useSelector((state) => state.client.error);
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const backText = props.route.params.backText;
   let address = props.route.params.state;
   const [region, setRegion] = React.useState({
@@ -87,7 +87,7 @@ export default function SelectLocationScreen(props) {
         style={{ backgroundColor: Colors.primary }}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
         textStyle={styles.headerText}
       />

@@ -44,7 +44,6 @@ const initialState = {
   items: [],
   itemsCached: false,
   language: "",
-  rtl: false,
   config: {},
 };
 
@@ -110,7 +109,6 @@ export const verify = createAsyncThunk(
     try {
       const response = await call(verificationRequest(phone, code));
       await SecureStore.setItemAsync("token", response.data.auth_token);
-      console.log(response.data);
       return {
         loggedIn: true,
         phone: phone,
@@ -118,7 +116,6 @@ export const verify = createAsyncThunk(
         newUser: response.data.new_client,
       };
     } catch (error) {
-      console.log(error.response.data);
       return {
         loggedIn: false,
         error: error.response.data.message,
@@ -238,7 +235,6 @@ export const addAddress = createAsyncThunk(
         address: response.data.address,
       };
     } catch (error) {
-      console.log(error.response.data);
       return {
         success: false,
         error: error.response.data.message,
@@ -284,7 +280,6 @@ export const updateUserData = createAsyncThunk(
     if (userData.birthDate != null && userData.birthDate != "") {
       data["birth_date"] = userData.birthDate;
     }
-    console.log(data);
     try {
       const response = await call(updateUserDataRequest(token, data));
       return {
@@ -292,7 +287,6 @@ export const updateUserData = createAsyncThunk(
         user: response.data.client,
       };
     } catch (error) {
-      console.log(error.response);
       return {
         success: false,
         error: error.response.data.message,
@@ -413,11 +407,6 @@ const clientSlice = createSlice({
   extraReducers: {
     [setLanguage.fulfilled]: (state, action) => {
       state.language = action.payload.language;
-      if (state.language == "ar") {
-        state.rtl = true;
-      } else {
-        state.rtl = false;
-      }
     },
     [initialization.pending]: (state, action) => {
       state.status = "loading";
@@ -435,11 +424,6 @@ const clientSlice = createSlice({
         state.token = action.payload.token;
         state.referral_code = action.payload.client.referral_code;
         state.language = action.payload.language;
-        if (state.language == "ar") {
-          state.rtl = true;
-        } else {
-          state.rtl = false;
-        }
         state.loggedIn = true;
       } else {
         state.error = action.payload.error;

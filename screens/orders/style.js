@@ -33,13 +33,15 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
     fontSize: 0.03 * screenHeight,
     color: "#fff",
-    margin: "6.5%",
+    marginRight: "6.5%",
+    marginLeft: "6.5%",
     // marginTop: 2,
   },
   headerIcon: {
     width: 0.0835 * screenWidth,
     height: 0.087193 * screenWidth,
-    position: "absolute",
+    // position: "absolute",
+    margin: "6.5%",
   },
   scroll: {
     flexGrow: 1,

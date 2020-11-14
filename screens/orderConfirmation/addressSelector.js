@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
+  I18nManager,
 } from "react-native";
 import Colors from "../../constants/Colors";
 import Translations from "../../constants/Translations";
@@ -28,7 +29,7 @@ export default function AddressSelector({
   addresses,
   navigation,
 }) {
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const onPressAdd = () => {
     navigation.navigate("AddAddress", {
       backText: Translations.t("orderConfirmation"),

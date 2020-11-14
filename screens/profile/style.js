@@ -143,6 +143,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  verticalSeparator: {
+    borderColor: Colors.back,
+    height: 0.15 * screenHeight,
+    width: 0,
+    borderRightWidth: 1,
+  },
   referralSection: {
     height: 0.15 * screenHeight,
     width: "60%",
@@ -241,12 +247,28 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
     fontSize: 0.023 * screenHeight,
     color: "#fff",
-    margin: "6.5%",
+    marginStart: "6.5%",
   },
   headerIcon: {
     width: 0.064861 * screenWidth,
     height: 0.0869166 * screenWidth,
-    position: "absolute",
+    margin: "6.5%",
+  },
+  dropdown: {
+    width: 10,
+    height: 10,
+  },
+  iosPicker: {
+    flexDirection: "row",
+    width: 150,
+    justifyContent: "space-between",
+    padding: 10,
+    alignItems: "center",
+  },
+  lang: {
+    fontFamily: "poppins-regular",
+    color: Colors.back,
+    fontSize: 17,
   },
 });
 

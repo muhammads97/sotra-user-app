@@ -6,6 +6,9 @@ import {
   Text,
   Alert,
   I18nManager,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import trans from "../../constants/Translations";
@@ -20,7 +23,6 @@ import Colors from "../../constants/Colors";
 export default function VerificationScreen(props) {
   const dispatch = useDispatch();
   const phone = useSelector((state) => state.client.phone);
-  const name = useSelector((state) => state.client.name);
   const status = useSelector((state) => state.client.status);
   const error = useSelector((state) => state.client.error);
   const maxTimer = 60;
@@ -34,19 +36,50 @@ export default function VerificationScreen(props) {
   if (status == "failed") {
     switch (error) {
       case "#E014":
-        Alert.alert(trans.t("maximumAttempts"), trans.t("maxAtmpts"));
+        Alert.alert(
+          trans.t("maximumAttempts"),
+          trans.t("maxAtmpts"),
+          [
+            {
+              text: trans.t("ok"),
+            },
+          ],
+          {
+            onDismiss: () => setDisabled(false),
+          }
+        );
         break;
       case "#E017":
-        Alert.alert(trans.t("error"), trans.t("alreadyDelivery"));
+        Alert.alert(trans.t("error"), trans.t("alreadyDelivery"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
       case "#E012":
-        Alert.alert(trans.t("error"), trans.t("loginAgain"));
+        Alert.alert(trans.t("error"), trans.t("loginAgain"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
       case "#E013":
-        Alert.alert(trans.t("error"), trans.t("wrongVCode"));
+        Alert.alert(trans.t("error"), trans.t("wrongVCode"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
       default:
-        Alert.alert(trans.t("error"), trans.t("unknownError"));
+        Alert.alert(trans.t("error"), trans.t("unknownError"), [
+          {
+            text: trans.t("ok"),
+            onPress: () => setDisabled(false),
+          },
+        ]);
         break;
     }
     dispatch(resetRequestStatus());
@@ -67,8 +100,8 @@ export default function VerificationScreen(props) {
       dispatch(verify({ phone, code }));
     } else {
       Alert.alert(trans.t("error"), trans.t("enterCorrectCode"));
+      setDisabled(false);
     }
-    setDisabled(false);
   };
 
   const resend = async () => {
@@ -93,18 +126,18 @@ export default function VerificationScreen(props) {
   };
   React.useEffect(() => {
     dispatch(resetRequestStatus());
+    Keyboard.dismiss();
     startTimer();
   }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={Colors.primary} />
-      <View
-        style={styles.container}
-        contentContainerStyle={styles.container}
-        scrollEventThrottle={16}
-      >
-        <View style={styles.verify}>
+      <View style={styles.container}>
+        <KeyboardAvoidingView
+          style={styles.verify}
+          behavior={Platform.OS == "ios" ? "padding" : null}
+        >
           <View style={styles.box}>
             <Text style={styles.verificationText}>
               {trans.t("verification")}
@@ -155,7 +188,7 @@ export default function VerificationScreen(props) {
               <Text style={styles.buttonText}>{trans.t("submit")}</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </View>
     </View>
   );

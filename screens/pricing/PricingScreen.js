@@ -1,5 +1,12 @@
 import * as React from "react";
-import { View, Text, Image, RefreshControl, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  RefreshControl,
+  Dimensions,
+  I18nManager,
+} from "react-native";
 import Icons from "../../constants/Icons";
 import { ScrollView } from "react-native-gesture-handler";
 import styles from "./style";
@@ -17,7 +24,7 @@ export default function PricingScreen({ navigation, route }) {
   const headerText = trans.t("pricingList");
   const items = useSelector((state) => state.client.items);
   const cached = useSelector((state) => state.client.itemsCached);
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const lang = useSelector((state) => state.client.language);
   const [headerShadow, setHeaderShadow] = React.useState({});
   const [refreshing, setRefreshing] = React.useState(false);
@@ -31,12 +38,16 @@ export default function PricingScreen({ navigation, route }) {
     return (
       <View style={styles.row} key={index}>
         <Text style={styles.item}>{name}</Text>
-        <Text style={[styles.priceIron]}>
-          {trans.t("LE")} {data.ironing_price}
-        </Text>
-        <Text style={styles.priceClean}>
-          {trans.t("LE")} {data.cleaning_price}
-        </Text>
+        <View style={styles.Hrow2}>
+          <Text style={[styles.priceIron]}>
+            {trans.t("LE")} {data.ironing_price}
+          </Text>
+          <View style={styles.cText}>
+            <Text style={styles.priceClean}>
+              {trans.t("LE")} {data.cleaning_price}
+            </Text>
+          </View>
+        </View>
       </View>
     );
   };
@@ -79,7 +90,7 @@ export default function PricingScreen({ navigation, route }) {
         text={headerText}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
       />
       <ScrollView
@@ -108,16 +119,18 @@ export default function PricingScreen({ navigation, route }) {
         <View style={styles.card}>
           <View style={styles.tableHeader}>
             <Text style={styles.tableTilte}>{trans.t("items")}</Text>
-            <Image
-              source={Icons.iron}
-              style={styles.iron}
-              resizeMode={"contain"}
-            />
-            <Image
-              source={Icons.clean}
-              style={styles.clean}
-              resizeMode={"contain"}
-            />
+            <View style={styles.Hrow}>
+              <Image
+                source={Icons.iron}
+                style={styles.iron}
+                resizeMode={"contain"}
+              />
+              <Image
+                source={Icons.clean}
+                style={styles.clean}
+                resizeMode={"contain"}
+              />
+            </View>
           </View>
           <View style={styles.separator} />
           {items.map((item, index) => {

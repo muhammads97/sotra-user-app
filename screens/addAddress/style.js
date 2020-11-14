@@ -30,8 +30,11 @@ const styles = StyleSheet.create({
   headerIcon: {
     width: 0.197 * screenWidth,
     height: 0.16202 * screenWidth,
-    position: "absolute",
-    top: 0.01375 * screenHeight,
+    // position: "absolute",
+    // top: 0.01375 * screenHeight,
+    margin: "5%",
+    // paddingTop: 0.1375 * screenHeight,
+    marginBottom: 0,
   },
   buttonText: {
     fontFamily: "poppins-regular",

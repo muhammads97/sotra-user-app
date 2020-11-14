@@ -11,6 +11,8 @@ import {
   Platform,
   Share,
   Picker,
+  I18nManager,
+  ActionSheetIOS,
 } from "react-native";
 import Colors from "../../constants/Colors";
 import Icons from "../../constants/Icons";
@@ -48,7 +50,7 @@ export default function ProfileScreen({ navigation, route }) {
   const referralCode = useSelector((state) => state.client.referral_code);
   const balance = useSelector((state) => state.client.balance);
   const language = useSelector((state) => state.client.language);
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const config = useSelector((state) => state.client.config);
   const rootNav = route.params.rootNav;
   const [addressFont, setAddressFont] = React.useState(0.017 * screenHeight);
@@ -136,6 +138,21 @@ export default function ProfileScreen({ navigation, route }) {
     });
   };
 
+  const openLanguageSelect = () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: [trans.t("english"), trans.t("arabic")],
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          if (language == "ar") dispatch(setLanguage({ language: "en" }));
+        } else if (buttonIndex === 1) {
+          if (language == "en") dispatch(setLanguage({ language: "ar" }));
+        }
+      }
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -148,7 +165,7 @@ export default function ProfileScreen({ navigation, route }) {
         text={headerText}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
       />
 
@@ -200,7 +217,7 @@ export default function ProfileScreen({ navigation, route }) {
           <View
             style={[
               styles.balanceSection,
-              rtl ? { borderLeftWidth: 1 } : { borderRightWidth: 1 },
+              // rtl ? { borderLeftWidth: 1 } : { borderRightWidth: 1 },
             ]}
           >
             <Text style={styles.balanceText}>{trans.t("balance")}</Text>
@@ -208,6 +225,7 @@ export default function ProfileScreen({ navigation, route }) {
               {balance} {trans.t("LE")}
             </Text>
           </View>
+          <View style={styles.verticalSeparator} />
           <View style={styles.referralSection}>
             <Text style={styles.balanceText}>{trans.t("referralCode")}</Text>
             <Text style={styles.balanceText}>{referralCode}</Text>
@@ -288,19 +306,32 @@ export default function ProfileScreen({ navigation, route }) {
         </View>
         <View style={styles.languageView}>
           <Text style={styles.toggleText}>{trans.t("language")}</Text>
-          <Picker
-            selectedValue={language}
-            style={{
-              width: 150,
-              color: Colors.back,
-            }}
-            onValueChange={(itemValue, itemIndex) =>
-              dispatch(setLanguage({ language: itemValue }))
-            }
-          >
-            <Picker.Item label={trans.t("english")} value="en" />
-            <Picker.Item label={trans.t("arabic")} value="ar" />
-          </Picker>
+          {Platform.OS == "ios" ? (
+            <TouchableOpacity
+              style={styles.iosPicker}
+              onPress={() => openLanguageSelect()}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.lang}>
+                {language == "ar" ? trans.t("arabic") : trans.t("english")}
+              </Text>
+              <Image source={Icons.triangle} style={styles.dropdown} />
+            </TouchableOpacity>
+          ) : (
+            <Picker
+              selectedValue={language}
+              style={{
+                width: 150,
+                color: Colors.back,
+              }}
+              onValueChange={(itemValue, itemIndex) =>
+                dispatch(setLanguage({ language: itemValue }))
+              }
+            >
+              <Picker.Item label={trans.t("english")} value="en" />
+              <Picker.Item label={trans.t("arabic")} value="ar" />
+            </Picker>
+          )}
         </View>
       </ScrollView>
     </View>

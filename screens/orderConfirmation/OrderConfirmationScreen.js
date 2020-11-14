@@ -7,6 +7,7 @@ import {
   Switch,
   TextInput,
   Alert,
+  I18nManager,
 } from "react-native";
 import Header from "../../components/header/Header";
 import RoundEdgeButton from "../../components/button/RoundEdge";
@@ -36,7 +37,7 @@ export default function OrderConfirmationScreen(props) {
   const status = useSelector((state) => state.orders.status);
   const error = useSelector((state) => state.orders.error);
   const balance = useSelector((state) => state.client.balance);
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
 
   const backText = props.route.params.backText;
 
@@ -124,7 +125,7 @@ export default function OrderConfirmationScreen(props) {
         text={Translations.t("orderConfirmation")}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
         backText={backText}
       />
@@ -139,7 +140,7 @@ export default function OrderConfirmationScreen(props) {
         {Platform.OS == "ios" ? (
           <View
             style={{
-              height: 25,
+              height: 0,
               width: "100%",
             }}
           />
@@ -155,15 +156,18 @@ export default function OrderConfirmationScreen(props) {
                       borderRightWidth: 0.5,
                     }
                   : {},
+                { borderTopStartRadius: 0.03333 * screenWidth },
               ]}
               onPress={() => setSlot(0)}
             >
               <Text style={styles.optionsText}>
                 {Translations.t("morning")}
               </Text>
-              <Text style={styles.timeText}>{`${
-                getTimeSlot("morning").from
-              } ~ ${getTimeSlot("morning").to} AM`}</Text>
+              {addresses.length == 0 ? null : (
+                <Text style={styles.timeText}>{`${
+                  getTimeSlot("morning").from
+                } ~ ${getTimeSlot("morning").to} AM`}</Text>
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -174,13 +178,16 @@ export default function OrderConfirmationScreen(props) {
                       borderLeftWidth: 0.5,
                     }
                   : {},
+                { borderTopEndRadius: 0.03333 * screenWidth },
               ]}
               onPress={() => setSlot(1)}
             >
               <Text style={styles.optionsText}>{Translations.t("night")}</Text>
-              <Text style={styles.timeText}>{`${getTimeSlot("night").from} ~ ${
-                getTimeSlot("night").to
-              } PM`}</Text>
+              {addresses.length == 0 ? null : (
+                <Text style={styles.timeText}>{`${
+                  getTimeSlot("night").from
+                } ~ ${getTimeSlot("night").to} PM`}</Text>
+              )}
             </TouchableOpacity>
           </View>
           <View style={styles.addressHolder}>

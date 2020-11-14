@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  I18nManager,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FloatingTitleTextInputField from "../../components/inputs/FloatingPlaceholderTextInput";
@@ -21,7 +22,7 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function AddAddressScreen(props) {
   const dispatch = useDispatch();
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const backText = props.route.params.backText;
 
   const [name, setName] = React.useState("");
@@ -64,7 +65,7 @@ export default function AddAddressScreen(props) {
         text={Translations.t("addNewAddress")}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
       />
       <KeyboardAwareScrollView

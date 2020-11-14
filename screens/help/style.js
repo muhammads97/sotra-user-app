@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     color: Colors.back,
     // margin: 15,
     // marginBottom: 0,
-    marginTop: -10,
+    marginTop: -5,
     marginBottom: 20,
   },
   step: {
@@ -74,14 +74,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     width: 40,
     height: 120,
-    // borderWidth: 1,
   },
   stepText: {
     fontFamily: "poppins-light",
     fontSize: 0.017 * screenHeight,
     color: Colors.back,
     width: 0.65 * screenWidth,
-    margin: 10,
+    marginStart: 10,
+    // borderWidth: 1,
   },
   supportText: {
     fontFamily: "poppins-regular",
@@ -283,12 +283,13 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
     fontSize: 0.023 * screenHeight,
     color: "#fff",
-    margin: "6.5%",
+    marginStart: "6.5%",
   },
   headerIcon: {
     width: 0.064861 * screenWidth,
     height: 0.0869166 * screenWidth,
-    position: "absolute",
+    // position: "absolute",
+    margin: "6.5%",
   },
 });
 

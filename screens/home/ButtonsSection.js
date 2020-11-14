@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Dimensions } from "react-native";
+import { View, Dimensions, I18nManager } from "react-native";
 import SquareButton from "../../components/button/Square";
 import styles from "./style";
 import Icons from "../../constants/Icons";
@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 export default function ButtonsSection({ nav, updateUser }) {
-  const rtl = useSelector((state) => state.client.rtl);
+  const rtl = I18nManager.isRTL;
   const iconMarginTop = {
     marginTop: rtl ? -0.01 * screenWidth : -0.05 * screenWidth,
   };

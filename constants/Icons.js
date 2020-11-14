@@ -37,6 +37,7 @@ const Icons = {
   loading: require("../assets/icons/loading.png"),
   share: require("../assets/icons/share.png"),
   messenger: require("../assets/icons/messenger.png"),
+  triangle: require("../assets/icons/triangle.png"),
 };
 
 export default Icons;

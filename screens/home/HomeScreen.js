@@ -13,12 +13,6 @@ export default function HomeScreen(props) {
   const name = useSelector((state) => state.client.name);
   const status = useSelector((state) => state.client.status);
   const error = useSelector((state) => state.client.error);
-  const direction = useSelector((state) => state.client.direction);
-  const textRtl = direction == "rtl" && {
-    textAlign: "right",
-    writingDirection: "rtl",
-  };
-  const viewRtl = direction == "rtl" && { flexDirection: "row-reverse" };
 
   if (status == "failed") {
     console.log("home screen:", error);

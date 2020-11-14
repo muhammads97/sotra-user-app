@@ -1,5 +1,12 @@
 import * as React from "react";
-import { View, Text, RefreshControl, Platform, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  RefreshControl,
+  Platform,
+  Dimensions,
+  I18nManager,
+} from "react-native";
 import Header from "../../components/header/Header";
 import Icons from "../../constants/Icons";
 import Colors from "../../constants/Colors";
@@ -30,8 +37,7 @@ export default function OrdersScreen(props) {
   const serving = useSelector((state) => state.orders.serving);
   const servingCached = useSelector((state) => state.orders.servingCached);
   const delivering = useSelector((state) => state.orders.delivering);
-  const rtl = useSelector((state) => state.client.rtl);
-  const lang = useSelector((state) => state.client.language);
+  const rtl = I18nManager.isRTL;
   const deliveringCached = useSelector(
     (state) => state.orders.deliveringCached
   );
@@ -92,6 +98,7 @@ export default function OrdersScreen(props) {
   };
 
   const onRefresh = async () => {
+    // console.log("refresh");
     setRefreshing(true);
     load(true);
     setRefreshing(false);
@@ -130,7 +137,7 @@ export default function OrdersScreen(props) {
         style={{ backgroundColor: Colors.orders }}
         iconStyle={[
           styles.headerIcon,
-          rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
+          // rtl ? { left: 0.05 * screenWidth } : { right: 0.05 * screenWidth },
         ]}
         textStyle={styles.headerText}
       />
